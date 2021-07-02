@@ -7,4 +7,10 @@ To run app:
 ```bash
 ./run.sh
 ```
+
+To setup database:
+
+```bash
+./setup_db.sh
+```
 ## Author: Paul Spencer
