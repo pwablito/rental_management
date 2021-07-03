@@ -1,6 +1,6 @@
 import sqlite3
-import user
-import error
+import api.user
+import api.error
 
 
 CLIENT_TYPE = 1
@@ -61,9 +61,9 @@ def get_user_by_username(username):
     user = user.User(row[0], row[1], row[2], row[4], row[5])
     if row[3] == CLIENT_TYPE:
         return user.ClientUser(user)
-    else if row[3] == REALTOR_TYPE:
+    elif row[3] == REALTOR_TYPE:
         return user.RealtorUser(user)
-    else if row[3] == ADMIN_TYPE:
+    elif row[3] == ADMIN_TYPE:
         return user.AdminUser(user)
     raise InvalidUserTypeException
 
@@ -81,10 +81,11 @@ def get_user_by_username(id):
         raise error.UserNotFoundException
     if row[3] == CLIENT_TYPE:
         return user.ClientUser(user)
-    else if row[3] == REALTOR_TYPE:
+    elif row[3] == REALTOR_TYPE:
         return user.RealtorUser(user)
-    else if row[3] == ADMIN_TYPE:
+    elif row[3] == ADMIN_TYPE:
         return user.AdminUser(user)
+    raise error.InvalidUserTypeException
 
 def get_user_type_number(user):
     if type(user) == user.ClientUser:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sqlite3
-from api import db
+import api.db
 
 
 if __name__ == '__main__':
-    db.setup_database()
+    api.db.setup_database()
