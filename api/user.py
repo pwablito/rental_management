@@ -1,4 +1,4 @@
-import util
+import api.util
 
 class User:
     def __init__(self, id, username, created_on, password_hash, password_salt):

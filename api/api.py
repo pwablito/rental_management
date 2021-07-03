@@ -1,7 +1,7 @@
 import json
 from flask import request
-import util
-import user
+import api.util
+import api.user
 
 
 def register():
