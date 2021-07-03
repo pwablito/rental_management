@@ -5,7 +5,7 @@ import api.api
 
 app = Flask(__name__, static_url_path="", static_folder="client/dist")
 
-app.add_url_rule('/api/test', view_func=api.api.test)
+app.add_url_rule('/api/register', view_func=api.api.register, methods=["POST"])
 
 @app.route('/')
 def index():
