@@ -1,8 +1,10 @@
 <template>
-  <div class="rentalmanagement">
-    <h1>{{ msg }}</h1>
-    <div class="centered content">
+  <div class="rentalmanagement left-aligned">
+    <div>
       <LoginRegister v-if="!this.is_logged_in" @register_user="set_user" />
+      <ClientPortal v-if="this.is_client" />
+      <RealtorPortal v-if="this.is_realtor" />
+      <AdminPortal v-if="this.is_admin" />
     </div>
   </div>
 </template>
@@ -10,23 +12,45 @@
 <script>
 
 import LoginRegister from './LoginRegister.vue';
+import ClientPortal from './ClientPortal.vue'
+import RealtorPortal from './RealtorPortal.vue'
+import AdminPortal from './AdminPortal.vue'
 
 export default {
   name: 'RentalManagement',
   components: {
-    LoginRegister
-  },
-  props: {
-    msg: String
+    LoginRegister,
+    ClientPortal,
+    RealtorPortal,
+    AdminPortal,
   },
   data() {
     return {
-      user: null
+      user: null,
+      token: null,
     }
   },
   computed: {
     is_logged_in() {
-      return this.user !== null
+      return this.user !== null;
+    },
+    is_client() {
+      if (this.user !== null) {
+        return this.user.type === "client";
+      }
+      return false;
+    },
+    is_realtor() {
+      if (this.user !== null) {
+        return this.user.type === "realtor";
+      }
+      return false;
+    },
+    is_admin() {
+      if (this.user !== null) {
+        return this.user.type === "admin";
+      }
+      return false;
     }
   },
   methods: {
@@ -38,12 +62,7 @@ export default {
 </script>
 
 <style scoped>
-.centered {
-  text-align: center;
-  justify-content: center;
-}
-
-.content {
-  max-width: 800px;
+.left-aligned {
+  text-align: left;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <RentalManagement msg="Welcome to Rental Management Portal"/>
+    <RentalManagement />
   </div>
 </template>
 
@@ -16,4 +16,9 @@ export default {
 </script>
 
 <style>
+#app {
+  text-align: center;
+  margin-left: 20%;
+  margin-right: 20%;
+}
 </style>
