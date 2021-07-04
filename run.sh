@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd client
-npm run build
+npm run serve &
 cd ..
 
 ./app.py
