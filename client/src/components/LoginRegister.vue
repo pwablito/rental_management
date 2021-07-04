@@ -127,10 +127,9 @@ export default {
             } else {
               this.error_message = response.data.message;
             }
-            console.log(response);
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            this.error_message = "Something went wrong";
           });
       }
     },
@@ -157,10 +156,9 @@ export default {
             } else {
               this.error_message = response.data.message;
             }
-            console.log(response);
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            this.error_message = "Something went wrong";
           });
       }
     },
