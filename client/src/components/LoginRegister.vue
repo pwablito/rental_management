@@ -34,7 +34,10 @@
           <button type="submit" class="btn btn-success">Submit</button>
         </div>
       </form>
-      <p>Already have an account? <button @click="this.toggle_login_register">login</button> now.</p>
+      <p>
+        Already have an account?
+        <button @click="this.toggle_login_register">login</button> now.
+      </p>
     </div>
     <div class="login" v-else>
       <h2 class="centered">Login</h2>
@@ -61,7 +64,10 @@
           <button type="submit" class="btn btn-success">Submit</button>
         </div>
       </form>
-      <p>Don't have an account? <button @click="this.toggle_login_register">register</button> now.</p>
+      <p>
+        Don't have an account?
+        <button @click="this.toggle_login_register">register</button> now.
+      </p>
     </div>
     <p class="red" v-if="this.error_message !== ''">
       {{ this.error_message }}
@@ -99,45 +105,64 @@ export default {
     register(e) {
       e.preventDefault(); // Keep page from reloading
       this.error_message = null;
-      // TODO make sure all fields are filled out
-      axios
-        .post("/api/register", {
-          username: this.input.register.username,
-          name: this.input.register.name,
-          password: this.input.register.password,
-        })
-        .then((response) => {
-          if (response.data.success) {
-            this.$emit("set_user_and_token", {"user": response.data.user, "token": response.date.token})
-          } else {
-            this.error_message = response.data.message;
-          }
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (
+        this.input.register.name === "" ||
+        this.input.register.uesrname === "" ||
+        this.input.register.password === ""
+      ) {
+        this.error_message = "Please fill out all fields";
+      } else {
+        axios
+          .post("/api/register", {
+            username: this.input.register.username,
+            name: this.input.register.name,
+            password: this.input.register.password,
+          })
+          .then((response) => {
+            if (response.data.success) {
+              this.$emit("set_user_and_token", {
+                user: response.data.user,
+                token: response.date.token,
+              });
+            } else {
+              this.error_message = response.data.message;
+            }
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
     login(e) {
       e.preventDefault(); // Keep page from reloading
       this.error_message = null;
-      // TODO make sure all fields are filled out
-      axios
-        .post("/api/login", {
-          username: this.input.login.username,
-          password: this.input.login.password,
-        })
-        .then((response) => {
-          if (response.data.success) {
-            this.$emit("set_user_and_token", {"user": response.data.user, "token": response.data.token})
-          } else {
-            this.error_message = response.data.message;
-          }
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (
+        this.input.login.username === "" ||
+        this.input.login.password === ""
+      ) {
+        this.error_message = "Please fill out all fields";
+      } else {
+        axios
+          .post("/api/login", {
+            username: this.input.login.username,
+            password: this.input.login.password,
+          })
+          .then((response) => {
+            if (response.data.success) {
+              this.$emit("set_user_and_token", {
+                user: response.data.user,
+                token: response.data.token,
+              });
+            } else {
+              this.error_message = response.data.message;
+            }
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
   },
 };
