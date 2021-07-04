@@ -11,11 +11,13 @@ def register():
     salt = api.util.random_string()
     password_hash = api.util.get_hash(salt + request_data["password"])
     try:
-        user = api.user.ClientUser(request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt)
+        token = api.util.random_string()
+        user = api.user.ClientUser(request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, token)
         api.db.insert_user(user)
         return json.dumps({
             "success": True,
             "user": user.to_dict(),
+            "token": token,
         })
     except api.error.UserAlreadyExistsException:
         return json.dumps({
@@ -33,10 +35,12 @@ def login():
             "message": "Invalid username",
         })
     if api.util.get_hash(user.password_salt + request_data["password"]) == user.password_hash:
-        # Success
+        token = api.util.random_string()
+        api.db.update_token(user.username, token)
         return json.dumps({
             "success": True,
             "user": user.to_dict(),
+            "token": token,
         })
     return json.dumps({
         "success": False,

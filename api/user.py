@@ -1,12 +1,13 @@
 import api.util
 
 class User:
-    def __init__(self, username, name, created_on, password_hash, password_salt):
+    def __init__(self, username, name, created_on, password_hash, password_salt, token):
         self.username = username
         self.name = name
         self.created_on = created_on
         self.password_hash = password_hash
         self.password_salt = password_salt
+        self.token = token
 
     def to_dict(self):
         return {

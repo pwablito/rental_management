@@ -108,7 +108,7 @@ export default {
         })
         .then((response) => {
           if (response.data.success) {
-            this.$emit("set_user", response.data.user)
+            this.$emit("set_user_and_token", {"user": response.data.user, "token": response.date.token})
           } else {
             this.error_message = response.data.message;
           }
@@ -129,7 +129,7 @@ export default {
         })
         .then((response) => {
           if (response.data.success) {
-            this.$emit("set_user", response.data.user)
+            this.$emit("set_user_and_token", {"user": response.data.user, "token": response.data.token})
           } else {
             this.error_message = response.data.message;
           }

@@ -1,11 +1,11 @@
 <template>
   <div class="rentalmanagement left-aligned">
     <div>
-      <LoginRegister v-if="!this.is_logged_in" @set_user="set_user" />
+      <LoginRegister v-if="!this.is_logged_in" @set_user="set_user_and_token" />
       <div v-else>
-        <ClientPortal v-if="this.is_client" />
-        <RealtorPortal v-if="this.is_realtor" />
-        <AdminPortal v-if="this.is_admin" />
+        <ClientPortal v-if="this.is_client" :user="this.user" :token="this.token" />
+        <RealtorPortal v-if="this.is_realtor" :user="this.user" :token="this.token" />
+        <AdminPortal v-if="this.is_admin" :user="this.user" :token="this.token" />
       </div>
     </div>
   </div>
@@ -56,8 +56,9 @@ export default {
     }
   },
   methods: {
-    set_user(payload) {
-      this.user = payload.user
+    set_user_and_token(payload) {
+      this.user = payload.user;
+      this.token = payload.token;
     }
   }
 }

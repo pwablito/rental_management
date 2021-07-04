@@ -26,7 +26,8 @@ def setup_database():
                 created_on INTEGER NOT NULL,
                 type INTEGER NOT NULL,
                 password_hash TEXT NOT NULL,
-                password_salt TEXT NOT NULL
+                password_salt TEXT NOT NULL,
+                token TEXT
             )
             '''
         )
@@ -52,20 +53,20 @@ def get_user(username):
     cursor = conn.cursor()
     cursor.execute(
         '''
-        SELECT username, name, created_on, type, password_hash, password_salt
+        SELECT username, name, created_on, type, password_hash, password_salt, token
         FROM user WHERE username=?
         ''', (username,)
     )
     row = cursor.fetchone()
     if not row:
         raise api.error.UserNotFoundException
-    user = api.user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5])
+    user = api.user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5], row[6])
     if row[3] == CLIENT_TYPE:
-        return api.user.ClientUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt)
+        return api.user.ClientUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
     elif row[3] == REALTOR_TYPE:
-        return api.user.RealtorUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt)
+        return api.user.RealtorUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
     elif row[3] == ADMIN_TYPE:
-        return api.user.AdminUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt)
+        return api.user.AdminUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
     raise InvalidUserTypeException
 
 def get_user_type_number(user):
@@ -78,14 +79,23 @@ def get_user_type_number(user):
     raise api.error.InvalidUserTypeException
 
 def insert_user(user):
-    # try:
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                '''
+                INSERT INTO user (username, name, created_on, type, password_hash, password_salt)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ''', (user.username, user.name, user.created_on, get_user_type_number(user), user.password_hash, user.password_salt)
+            )
+    except sqlite3.IntegrityError:
+        raise api.error.UserAlreadyExistsException
+
+def update_token(username, token):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
-            INSERT INTO user (username, name, created_on, type, password_hash, password_salt)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ''', (user.username, user.name, user.created_on, get_user_type_number(user), user.password_hash, user.password_salt)
+            UPDATE user SET token=? WHERE username=?
+            ''', (token, username,)
         )
-    # except:  # TODO catch conflicting primary keys, throw custom exception
-    #     pass
