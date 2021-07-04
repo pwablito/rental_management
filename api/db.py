@@ -1,4 +1,6 @@
 import sqlite3
+import datetime
+import dateutil.parser
 import api.user
 import api.error
 
@@ -57,13 +59,13 @@ def get_user(username):
     row = cursor.fetchone()
     if not row:
         raise api.error.UserNotFoundException
-    user = api.user.User(row[0], row[1], row[2], row[4], row[5])
+    user = api.user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5])
     if row[3] == CLIENT_TYPE:
-        return api.user.ClientUser(user)
+        return api.user.ClientUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt)
     elif row[3] == REALTOR_TYPE:
-        return api.user.RealtorUser(user)
+        return api.user.RealtorUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt)
     elif row[3] == ADMIN_TYPE:
-        return api.user.AdminUser(user)
+        return api.user.AdminUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt)
     raise InvalidUserTypeException
 
 def get_user_type_number(user):
@@ -77,13 +79,13 @@ def get_user_type_number(user):
 
 def insert_user(user):
     # try:
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        '''
-        INSERT INTO user (username, name, created_on, type, password_hash, password_salt)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ''', (user.username, user.name, user.created_on, get_user_type_number(user), user.password_hash, user.password_salt)
-    )
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            INSERT INTO user (username, name, created_on, type, password_hash, password_salt)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ''', (user.username, user.name, user.created_on, get_user_type_number(user), user.password_hash, user.password_salt)
+        )
     # except:  # TODO catch conflicting primary keys, throw custom exception
     #     pass
