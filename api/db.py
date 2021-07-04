@@ -19,8 +19,7 @@ def setup_database():
         cursor.execute(
             '''
             CREATE TABLE user (
-                id AUTO PRIMARY KEY,
-                username TEXT NOT NULL,
+                username TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
                 created_on INTEGER NOT NULL,
                 type INTEGER NOT NULL,
@@ -46,62 +45,45 @@ def setup_database():
             '''
         )
 
-def get_user_by_username(username):
+def get_user(username):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
         '''
-        SELECT id, username, name, created_on, type, password_hash, password_salt
+        SELECT username, name, created_on, type, password_hash, password_salt
         FROM user WHERE username=?
         ''', (username,)
     )
     row = cursor.fetchone()
     if not row:
-        raise error.UserNotFoundException
-    user = user.User(row[0], row[1], row[2], row[4], row[5])
+        raise api.error.UserNotFoundException
+    user = api.user.User(row[0], row[1], row[2], row[4], row[5])
     if row[3] == CLIENT_TYPE:
-        return user.ClientUser(user)
+        return api.user.ClientUser(user)
     elif row[3] == REALTOR_TYPE:
-        return user.RealtorUser(user)
+        return api.user.RealtorUser(user)
     elif row[3] == ADMIN_TYPE:
-        return user.AdminUser(user)
+        return api.user.AdminUser(user)
     raise InvalidUserTypeException
 
-def get_user_by_username(id):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        '''
-        SELECT id, username, name, created_on, type, password_hash, password_salt
-        FROM user WHERE id=?
-        ''', (id,)
-    )
-    row = cursor.fetchone()
-    if not row:
-        raise error.UserNotFoundException
-    if row[3] == CLIENT_TYPE:
-        return user.ClientUser(user)
-    elif row[3] == REALTOR_TYPE:
-        return user.RealtorUser(user)
-    elif row[3] == ADMIN_TYPE:
-        return user.AdminUser(user)
-    raise error.InvalidUserTypeException
-
 def get_user_type_number(user):
-    if type(user) == user.ClientUser:
+    if type(user) == api.user.ClientUser:
         return CLIENT_TYPE
-    if type(user) == user.RealtorUser:
+    if type(user) == api.user.RealtorUser:
         return REALTOR_TYPE
-    if type(user) == user.AdminType:
+    if type(user) == api.user.AdminType:
         return ADMIN_TYPE
-    raise error.InvalidUserTypeException
+    raise api.error.InvalidUserTypeException
 
 def insert_user(user):
+    # try:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
         '''
-        INSERT INTO user (id, username, name, created_on, type, password_hash, password_salt)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (user.id, user.username, user.name, user.created_on, get_user_type_number(user), user.password_hash, user.password_salt)
+        INSERT INTO user (username, name, created_on, type, password_hash, password_salt)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ''', (user.username, user.name, user.created_on, get_user_type_number(user), user.password_hash, user.password_salt)
     )
+    # except:  # TODO catch conflicting primary keys, throw custom exception
+    #     pass

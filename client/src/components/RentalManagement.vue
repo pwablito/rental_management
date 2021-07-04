@@ -1,10 +1,12 @@
 <template>
   <div class="rentalmanagement left-aligned">
     <div>
-      <LoginRegister v-if="!this.is_logged_in" @register_user="set_user" />
-      <ClientPortal v-if="this.is_client" />
-      <RealtorPortal v-if="this.is_realtor" />
-      <AdminPortal v-if="this.is_admin" />
+      <LoginRegister v-if="!this.is_logged_in" @set_user="set_user" />
+      <div v-else>
+        <ClientPortal v-if="this.is_client" />
+        <RealtorPortal v-if="this.is_realtor" />
+        <AdminPortal v-if="this.is_admin" />
+      </div>
     </div>
   </div>
 </template>
@@ -35,19 +37,19 @@ export default {
       return this.user !== null;
     },
     is_client() {
-      if (this.user !== null) {
+      if (this.user) {
         return this.user.type === "client";
       }
       return false;
     },
     is_realtor() {
-      if (this.user !== null) {
+      if (this.user) {
         return this.user.type === "realtor";
       }
       return false;
     },
     is_admin() {
-      if (this.user !== null) {
+      if (this.user) {
         return this.user.type === "admin";
       }
       return false;

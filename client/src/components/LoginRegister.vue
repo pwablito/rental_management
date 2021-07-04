@@ -4,64 +4,64 @@
       <h2 class="centered">Register</h2>
       <form @submit="register">
         <div class="form-group">
-          <label for="name_input">Name</label>
+          <label for="register_name_input">Name</label>
           <input
             type="text"
-            v-bind="name"
+            v-model="input.register.name"
             class="form-control"
-            id="name_input"
+            id="register_name_input"
           />
         </div>
         <div class="form-group">
-          <label for="username_input">Username</label>
+          <label for="register_username_input">Username</label>
           <input
             type="text"
-            v-bind="username"
+            v-model="input.register.username"
             class="form-control"
-            id="username_input"
+            id="register_username_input"
           />
         </div>
         <div class="form-group">
-          <label for="password_input">Password</label>
+          <label for="register_password_input">Password</label>
           <input
             type="password"
-            v-bind="password"
+            v-model="input.register.password"
             class="form-control"
-            id="password_input"
+            id="register_password_input"
           />
         </div>
         <div class="form-group centered">
           <button type="submit" class="btn btn-success">Submit</button>
         </div>
       </form>
-      <p>Already have an account? <button @click="this.toggle_login_register">login</button> now.
+      <p>Already have an account? <button @click="this.toggle_login_register">login</button> now.</p>
     </div>
     <div class="login" v-else>
       <h2 class="centered">Login</h2>
       <form @submit="login">
         <div class="form-group">
-          <label for="username_input">Username</label>
+          <label for="login_username_input">Username</label>
           <input
             type="text"
-            v-bind="username"
+            v-model="input.login.username"
             class="form-control"
-            id="username_input"
+            id="login_username_input"
           />
         </div>
         <div class="form-group">
-          <label for="password_input">Password</label>
+          <label for="login_password_input">Password</label>
           <input
             type="password"
-            v-bind="password"
+            v-model="input.login.password"
             class="form-control"
-            id="password_input"
+            id="login_password_input"
           />
         </div>
         <div class="form-group centered">
           <button type="submit" class="btn btn-success">Submit</button>
         </div>
       </form>
-      <p>Don't have an account? <button @click="this.toggle_login_register">register</button> now.
+      <p>Don't have an account? <button @click="this.toggle_login_register">register</button> now.</p>
     </div>
     <p class="red" v-if="this.error_message !== ''">
       {{ this.error_message }}
@@ -74,14 +74,19 @@ import axios from "axios";
 
 export default {
   name: "LoginRegister",
-  props: {
-    user: Object,
-  },
   data() {
     return {
-      name: "",
-      username: "",
-      password: "",
+      input: {
+        register: {
+          name: "",
+          username: "",
+          password: "",
+        },
+        login: {
+          username: "",
+          password: "",
+        },
+      },
       error_message: "",
       registering: false,
     };
@@ -89,6 +94,7 @@ export default {
   methods: {
     toggle_login_register() {
       this.registering = !this.registering;
+      this.error_message = null;
     },
     register(e) {
       e.preventDefault(); // Keep page from reloading
@@ -96,13 +102,13 @@ export default {
       // TODO make sure all fields are filled out
       axios
         .post("/api/register", {
-          username: this.username,
-          name: this.name,
-          password: this.password,
+          username: this.input.register.username,
+          name: this.input.register.name,
+          password: this.input.register.password,
         })
         .then((response) => {
           if (response.data.success) {
-            this.user = response.data.user;
+            this.$emit("set_user", response.data.user)
           } else {
             this.error_message = response.data.message;
           }
@@ -118,12 +124,12 @@ export default {
       // TODO make sure all fields are filled out
       axios
         .post("/api/login", {
-          username: this.username,
-          password: this.password,
+          username: this.input.login.username,
+          password: this.input.login.password,
         })
         .then((response) => {
           if (response.data.success) {
-            this.user = response.data.user;
+            this.$emit("set_user", response.data.user)
           } else {
             this.error_message = response.data.message;
           }
