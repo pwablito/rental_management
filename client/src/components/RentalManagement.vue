@@ -3,9 +3,9 @@
     <div>
       <LoginRegister v-if="!this.is_logged_in" @set_user="set_user" @set_token="set_token" />
       <div v-else>
-        <ClientPortal v-if="this.is_client" :user="this.user" :token="this.token" />
-        <RealtorPortal v-if="this.is_realtor" :user="this.user" :token="this.token" />
-        <AdminPortal v-if="this.is_admin" :user="this.user" :token="this.token" />
+        <ClientPortal v-if="this.is_client" :user="this.user" :token="this.token" @logout="logout" />
+        <RealtorPortal v-if="this.is_realtor" :user="this.user" :token="this.token" @logout="logout" />
+        <AdminPortal v-if="this.is_admin" :user="this.user" :token="this.token" @logout="logout" />
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@ export default {
         return this.user.type === "admin";
       }
       return false;
-    }
+    },
   },
   methods: {
     set_user(payload) {
@@ -61,6 +61,10 @@ export default {
     },
     set_token(payload) {
       this.token = payload.token;
+    },
+    logout() {
+      this.user = null;
+      this.token = null;
     }
   }
 }

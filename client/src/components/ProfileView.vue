@@ -20,6 +20,7 @@
               </tr>
           </tbody>
       </table>
+      <button class="centered btn btn-danger" @click="logout">Logout</button>
   </div>
 </template>
 
@@ -31,6 +32,11 @@ export default {
       user: Object,
       token: String,
   },
+  methods: {
+      logout() {
+          this.$emit("logout");
+      }
+  }
 }
 </script>
 
