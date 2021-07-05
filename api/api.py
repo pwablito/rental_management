@@ -46,3 +46,17 @@ def login():
         "success": False,
         "message": "Incorrect password",
     })
+
+def update_user():
+    request_data = json.loads(request.data.decode('utf-8'))
+    return json.dumps({
+        "success": False,
+        "message": "Not implemented",
+    })
+
+def get_listings():
+    request_data = json.loads(request.data.decode('utf-8'))
+    return json.dumps({
+        "success": False,
+        "message": "Not implemented",
+    })

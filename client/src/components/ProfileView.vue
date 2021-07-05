@@ -1,6 +1,25 @@
 <template>
   <div id="profileview">
-      Profile View
+      <table>
+          <tbody>
+              <tr>
+                  <td>Username</td>
+                  <td>{{user.username}}</td>
+              </tr>
+              <tr>
+                  <td>Role</td>
+                  <td>{{user.type}}</td>
+              </tr>
+              <tr>
+                  <td>Name</td>
+                  <td>{{user.name}}</td>
+              </tr>
+              <tr>
+                  <td>Created</td>
+                  <td>{{user.created_on}}</td>
+              </tr>
+          </tbody>
+      </table>
   </div>
 </template>
 
@@ -16,4 +35,8 @@ export default {
 </script>
 
 <style>
+table {
+    width: 100%;
+    text-align: center;
+}
 </style>

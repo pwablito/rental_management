@@ -4,18 +4,16 @@ from flask import Flask, redirect
 import api.api
 import requests
 
-app = Flask(
-    __name__,
-    # static_url_path="",
-    # static_folder="client/dist"
-)
+app = Flask(__name__)
 
 app.add_url_rule('/api/register', view_func=api.api.register, methods=["POST"])
 app.add_url_rule('/api/login', view_func=api.api.login, methods=["POST"])
+app.add_url_rule('/api/update_user', view_func=api.api.update_user, methods=["POST"])
+app.add_url_rule('/api/get_listings', view_func=api.api.get_listings, methods=["POST"])
 
-# @app.route('/')
-# def index():
-#     return redirect("/index.html", code=302)
+@app.route('/')
+def index():
+    return redirect("/index.html", code=302)
 
 @app.route('/<path:path>')
 def proxy(path):

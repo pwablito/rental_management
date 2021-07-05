@@ -49,25 +49,25 @@ def setup_database():
         )
 
 def get_user(username):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        '''
-        SELECT username, name, created_on, type, password_hash, password_salt, token
-        FROM user WHERE username=?
-        ''', (username,)
-    )
-    row = cursor.fetchone()
-    if not row:
-        raise api.error.UserNotFoundException
-    user = api.user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5], row[6])
-    if row[3] == CLIENT_TYPE:
-        return api.user.ClientUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
-    elif row[3] == REALTOR_TYPE:
-        return api.user.RealtorUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
-    elif row[3] == ADMIN_TYPE:
-        return api.user.AdminUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
-    raise InvalidUserTypeException
+    with get_connection as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            SELECT username, name, created_on, type, password_hash, password_salt, token
+            FROM user WHERE username=?
+            ''', (username,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            raise api.error.UserNotFoundException
+        user = api.user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5], row[6])
+        if row[3] == CLIENT_TYPE:
+            return api.user.ClientUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
+        elif row[3] == REALTOR_TYPE:
+            return api.user.RealtorUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
+        elif row[3] == ADMIN_TYPE:
+            return api.user.AdminUser(user.username, user.name, user.created_on, user.password_hash, user.password_salt, user.token)
+        raise InvalidUserTypeException
 
 def get_user_type_number(user):
     if type(user) == api.user.ClientUser:
@@ -99,3 +99,30 @@ def update_token(username, token):
             UPDATE user SET token=? WHERE username=?
             ''', (token, username,)
         )
+
+def get_all_listings():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            SELECT id, name, description, floor_area, price, rooms, bathrooms, created_on, latitude, longitude
+            FROM listing
+            '''
+        )
+        rows = cursor.fetchall()
+        listings = []
+        for row in rows:
+            #TODO maybe create a listing object type, parse created_on, etc
+            listings.append({
+                id: row[0],
+                name: row[1],
+                description: row[2],
+                floor_area: row[3],
+                price: row[4],
+                rooms: row[5],
+                bathrooms: row[6],
+                created_on: row[7],
+                latitude: row[8],
+                longitude: row[9],
+            })
+        return listings
