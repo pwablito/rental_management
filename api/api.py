@@ -56,13 +56,23 @@ def update_user():
     })
 
 def get_listings():
+    request_data = json.loads(request.data.decode('utf-8'))
     try:
+        user = api.db.get_user_by_token(request_data["token"])
+        is_client = False
+        if not user:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(user) == api.user.ClientUser:
+            is_client = True
         return json.dumps({
             "success": True,
-            "listings": [listing.to_dict() for listing in api.db.get_all_listings()]
+            "listings": [listing.to_dict() for listing in api.db.get_all_listings(only_listed=is_client)]
         })
     except Exception as e:
-        print(e)
+        raise e
         return json.dumps({
             "success": False,
             "message": "Something went wrong",
@@ -70,8 +80,8 @@ def get_listings():
 
 def create_listing():
     request_data = json.loads(request.data.decode('utf-8'))
-    user = api.db.get_user_by_token(request_data["token"])
     listing_id = api.util.random_string(length=20)
+    user = api.db.get_user_by_token(request_data["token"])
     if not user:
         return json.dumps({
             "success": False,
@@ -95,6 +105,7 @@ def create_listing():
             datetime.datetime.now(),
             request_data["latitude"],
             request_data["longitude"],
+            True
         ))
         return json.dumps({
             "success": True,

@@ -127,6 +127,7 @@ export default {
   },
   methods: {
     create_listing(e) {
+      this.error_message = "";
       e.preventDefault();
       axios
         .post("/api/create_listing", {

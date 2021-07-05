@@ -46,7 +46,8 @@ def setup_database():
                 bathrooms INTEGER NOT NULL,
                 created_on INTEGER NOT NULL,
                 latitude REAL NOT NULL,
-                longitude REAL NOT NULL
+                longitude REAL NOT NULL,
+                is_listed INTEGER NOT NULL
             )
             '''
         )
@@ -158,15 +159,16 @@ def insert_user(user):
             cursor.execute(
                 '''
                 INSERT INTO user (username, name, created_on,
-                type, password_hash, password_salt)
-                VALUES (?, ?, ?, ?, ?, ?)
+                type, password_hash, password_salt, token)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     user.username,
                     user.name,
                     user.created_on,
                     get_user_type_number(user),
                     user.password_hash,
-                    user.password_salt
+                    user.password_salt,
+                    user.token,
                 )
             )
     except sqlite3.IntegrityError:
@@ -183,20 +185,22 @@ def update_token(username, token):
         )
 
 
-def get_all_listings():
+def get_all_listings(only_listed=False):
+    query_string = '''
+                    SELECT id, name, description, floor_area, price,
+                    rooms, bathrooms, created_on, latitude, longitude, is_listed
+                    FROM listing
+                    '''
+    if only_listed:
+        query_string += '''
+                        WHERE is_listed=1
+                        '''
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            '''
-            SELECT id, name, description, floor_area, price,
-            rooms, bathrooms, created_on, latitude, longitude
-            FROM listing
-            '''
-        )
+        cursor.execute(query_string)
         rows = cursor.fetchall()
         listings = []
         for row in rows:
-            # TODO maybe create a listing object type, parse created_on, etc
             listings.append(api.listing.Listing(
                 row[0],
                 row[1],
@@ -208,6 +212,7 @@ def get_all_listings():
                 dateutil.parser.parse(row[7]),
                 row[8],
                 row[9],
+                True if row[10] != 0 else False,
             ))
         return listings
 
@@ -218,8 +223,8 @@ def insert_listing(listing):
         cursor.execute(
             '''
             INSERT INTO listing (id, name, description, floor_area,
-            price, rooms, bathrooms, created_on, latitude, longitude)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            price, rooms, bathrooms, created_on, latitude, longitude, is_listed)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 listing.id,
                 listing.name,
@@ -230,6 +235,7 @@ def insert_listing(listing):
                 listing.bathrooms,
                 listing.created_on,
                 listing.latitude,
-                listing.longitude
+                listing.longitude,
+                1 if listing.is_listed else 0
             )
         )
