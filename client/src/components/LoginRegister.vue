@@ -10,6 +10,7 @@
             v-model="input.register.name"
             class="form-control"
             id="register_name_input"
+            required
           />
         </div>
         <div class="form-group">
@@ -19,6 +20,7 @@
             v-model="input.register.username"
             class="form-control"
             id="register_username_input"
+            required
           />
         </div>
         <div class="form-group">
@@ -28,6 +30,7 @@
             v-model="input.register.password"
             class="form-control"
             id="register_password_input"
+            required
           />
         </div>
         <div class="form-group centered">
@@ -49,6 +52,7 @@
             v-model="input.login.username"
             class="form-control"
             id="login_username_input"
+            required
           />
         </div>
         <div class="form-group">
@@ -58,6 +62,7 @@
             v-model="input.login.password"
             class="form-control"
             id="login_password_input"
+            required
           />
         </div>
         <div class="form-group centered">
@@ -105,58 +110,43 @@ export default {
     register(e) {
       e.preventDefault(); // Keep page from reloading
       this.error_message = null;
-      if (
-        this.input.register.name === "" ||
-        this.input.register.uesrname === "" ||
-        this.input.register.password === ""
-      ) {
-        this.error_message = "Please fill out all fields";
-      } else {
-        axios
-          .post("/api/register", {
-            username: this.input.register.username,
-            name: this.input.register.name,
-            password: this.input.register.password,
-          })
-          .then((response) => {
-            if (response.data.success) {
-              this.$emit("set_user", {user: response.data.user});
-              this.$emit("set_token", {token: response.data.token});
-            } else {
-              this.error_message = response.data.message;
-            }
-          })
-          .catch(() => {
-            this.error_message = "Something went wrong";
-          });
-      }
+      axios
+        .post("/api/register", {
+          username: this.input.register.username,
+          name: this.input.register.name,
+          password: this.input.register.password,
+        })
+        .then((response) => {
+          if (response.data.success) {
+            this.$emit("set_user", { user: response.data.user });
+            this.$emit("set_token", { token: response.data.token });
+          } else {
+            this.error_message = response.data.message;
+          }
+        })
+        .catch(() => {
+          this.error_message = "Something went wrong";
+        });
     },
     login(e) {
       e.preventDefault(); // Keep page from reloading
       this.error_message = null;
-      if (
-        this.input.login.username === "" ||
-        this.input.login.password === ""
-      ) {
-        this.error_message = "Please fill out all fields";
-      } else {
-        axios
-          .post("/api/login", {
-            username: this.input.login.username,
-            password: this.input.login.password,
-          })
-          .then((response) => {
-            if (response.data.success) {
-              this.$emit("set_user", {user: response.data.user});
-              this.$emit("set_token", {token: response.data.token});
-            } else {
-              this.error_message = response.data.message;
-            }
-          })
-          .catch(() => {
-            this.error_message = "Something went wrong";
-          });
-      }
+      axios
+        .post("/api/login", {
+          username: this.input.login.username,
+          password: this.input.login.password,
+        })
+        .then((response) => {
+          if (response.data.success) {
+            this.$emit("set_user", { user: response.data.user });
+            this.$emit("set_token", { token: response.data.token });
+          } else {
+            this.error_message = response.data.message;
+          }
+        })
+        .catch(() => {
+          this.error_message = "Something went wrong";
+        });
     },
   },
 };
