@@ -10,6 +10,7 @@ app.add_url_rule('/api/register', view_func=api.api.register, methods=["POST"])
 app.add_url_rule('/api/login', view_func=api.api.login, methods=["POST"])
 app.add_url_rule('/api/update_user', view_func=api.api.update_user, methods=["POST"])
 app.add_url_rule('/api/get_listings', view_func=api.api.get_listings, methods=["POST"])
+app.add_url_rule('/api/create_listing', view_func=api.api.create_listing, methods=["POST"])
 
 @app.route('/')
 def index():

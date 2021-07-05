@@ -1,12 +1,17 @@
 <template>
   <div id="browseview">
-      Listings:
+    <div id="loading_div" class="centered" v-if="this.loading">Loading</div>
+    <div v-else>
+      <p>Listings:</p>
       <ul>
-          <li v-for="listing in this.listings" :key="listing">
-              {{listing}}
-          </li>
+        <p v-if="this.listings.length === 0">None found</p>
+        <li v-for="listing in this.listings" :key="listing">
+            {{listing}}
+        </li>
       </ul>
-    <p class="red" v-if="this.error_message !== ''">{{this.error_message}}</p>
+      <p class="red" v-if="this.error_message !== ''">{{this.error_message}}</p>
+      <button class="btn btn-primary" @click="this.get_listings">Reload</button>
+    </div>
   </div>
 </template>
 
@@ -56,5 +61,8 @@ export default {
 <style>
 .red {
     color: red;
+}
+.centered {
+  text-align: center;
 }
 </style>
