@@ -5,7 +5,7 @@
       <p>Listings:</p>
       <ul>
         <p v-if="this.listings.length === 0">None found</p>
-        <li v-for="listing in this.listings" :key="listing">
+        <li v-for="listing in this.listings" :key="listing.id">
             {{listing}}
         </li>
       </ul>
