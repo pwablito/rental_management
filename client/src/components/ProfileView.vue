@@ -45,4 +45,7 @@ table {
     width: 100%;
     text-align: center;
 }
+.centered {
+    text-align: center;
+}
 </style>
