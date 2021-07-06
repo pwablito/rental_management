@@ -134,10 +134,36 @@ def delete_listing():
         if type(user) == api.user.ClientUser:
             return json.dumps({
                 "success": False,
-                "message": "Client user can not create listings",
+                "message": "Client user can not delete listings",
             })
         # All other user types are allowed to create listings
         api.db.delete_listing(request_data["id"]
+        return json.dumps({
+            "success": True,
+        })
+    except KeyError:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
+
+
+def delete_user():
+    try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        user = api.db.get_user_by_token(request_data["token"])
+        if not user:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(user) != api.user.AdminUser:
+            return json.dumps({
+                "success": False,
+                "message": "Only administrators can not delete users",
+            })
+        # All other user types are allowed to create listings
+        api.db.delete_user(request_data["username"])
         return json.dumps({
             "success": True,
         })

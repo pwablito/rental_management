@@ -249,3 +249,13 @@ def delete_listing(id):
             DELETE FROM listing WHERE id=?
             ''', (id,)
         )
+
+
+def delete_user(username):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            DELETE FROM user WHERE username=?
+            ''', (username,)
+        )
