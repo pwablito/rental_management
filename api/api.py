@@ -135,7 +135,7 @@ def delete_listing():
                 "success": False,
                 "message": "Client user can not delete listings",
             })
-        api.db.delete_listing(request_data["id"]
+        api.db.delete_listing(request_data["id"])
         return json.dumps({
             "success": True,
         })
