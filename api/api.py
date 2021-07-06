@@ -98,7 +98,6 @@ def create_listing():
                 "success": False,
                 "message": "Client user can not create listings",
             })
-    # All other user types are allowed to create listings
         api.db.insert_listing(api.listing.Listing(
             listing_id,
             request_data["name"],
@@ -136,7 +135,6 @@ def delete_listing():
                 "success": False,
                 "message": "Client user can not delete listings",
             })
-        # All other user types are allowed to create listings
         api.db.delete_listing(request_data["id"]
         return json.dumps({
             "success": True,
@@ -162,7 +160,6 @@ def delete_user():
                 "success": False,
                 "message": "Only administrators can not delete users",
             })
-        # All other user types are allowed to create listings
         api.db.delete_user(request_data["username"])
         return json.dumps({
             "success": True,
