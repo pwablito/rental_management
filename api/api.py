@@ -171,7 +171,7 @@ def delete_user():
         })
 
 
-def get_listings():
+def get_users():
     request_data = json.loads(request.data.decode('utf-8'))
     try:
         user = api.db.get_user_by_token(request_data["token"])
