@@ -13,7 +13,8 @@ def register():
     password_hash = api.util.get_hash(salt + request_data["password"])
     try:
         token = api.util.random_string()
-        user = api.user.ClientUser(request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, token)
+        user = api.user.ClientUser(
+            request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, token)
         api.db.insert_user(user)
         return json.dumps({
             "success": True,
@@ -25,6 +26,7 @@ def register():
             "success": False,
             "message": "Username already taken",
         })
+
 
 def login():
     request_data = json.loads(request.data.decode('utf-8'))
@@ -48,12 +50,14 @@ def login():
         "message": "Incorrect password",
     })
 
+
 def update_user():
     request_data = json.loads(request.data.decode('utf-8'))
     return json.dumps({
         "success": False,
         "message": "Not implemented",
     })
+
 
 def get_listings():
     request_data = json.loads(request.data.decode('utf-8'))
@@ -78,22 +82,23 @@ def get_listings():
             "message": "Something went wrong",
         })
 
+
 def create_listing():
-    request_data = json.loads(request.data.decode('utf-8'))
-    listing_id = api.util.random_string(length=20)
-    user = api.db.get_user_by_token(request_data["token"])
-    if not user:
-        return json.dumps({
-            "success": False,
-            "message": "Invalid token",
-        })
-    if type(user) == api.user.ClientUser:
-        return json.dumps({
-            "success": False,
-            "message": "Client user can not create listings",
-        })
-    # All other user types are allowed to create listings
     try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        listing_id = api.util.random_string(length=20)
+        user = api.db.get_user_by_token(request_data["token"])
+        if not user:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(user) == api.user.ClientUser:
+            return json.dumps({
+                "success": False,
+                "message": "Client user can not create listings",
+            })
+    # All other user types are allowed to create listings
         api.db.insert_listing(api.listing.Listing(
             listing_id,
             request_data["name"],
@@ -111,6 +116,32 @@ def create_listing():
             "success": True,
         })
     except KeyError as e:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
+
+
+def delete_listing():
+    try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        user = api.db.get_user_by_token(request_data["token"])
+        if not user:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(user) == api.user.ClientUser:
+            return json.dumps({
+                "success": False,
+                "message": "Client user can not create listings",
+            })
+        # All other user types are allowed to create listings
+        api.db.delete_listing(request_data["id"]
+        return json.dumps({
+            "success": True,
+        })
+    except KeyError:
         return json.dumps({
             "success": False,
             "message": "Missing fields",

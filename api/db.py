@@ -239,3 +239,13 @@ def insert_listing(listing):
                 1 if listing.is_listed else 0
             )
         )
+
+
+def delete_listing(id):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            DELETE FROM listing WHERE id=?
+            ''', (id,)
+        )
