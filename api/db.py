@@ -259,3 +259,50 @@ def delete_user(username):
             DELETE FROM user WHERE username=?
             ''', (username,)
         )
+
+
+def get_all_users():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            SELECT username, name, created_on, type,
+            password_hash, password_salt, token
+            FROM user
+            '''
+        )
+        rows = cursor.fetchall()
+        users = []
+        for row in rows:
+            user = api.user.User(row[0], row[1], dateutil.parser.parse(
+                row[2]), row[4], row[5], row[6])
+            if row[3] == CLIENT_TYPE:
+                return api.user.ClientUser(
+                    user.username,
+                    user.name,
+                    user.created_on,
+                    user.password_hash,
+                    user.password_salt,
+                    user.token
+                )
+            elif row[3] == REALTOR_TYPE:
+                return api.user.RealtorUser(
+                    user.username,
+                    user.name,
+                    user.created_on,
+                    user.password_hash,
+                    user.password_salt,
+                    user.token
+                )
+            elif row[3] == ADMIN_TYPE:
+                return api.user.AdminUser(
+                    user.username,
+                    user.name,
+                    user.created_on,
+                    user.password_hash,
+                    user.password_salt,
+                    user.token
+                )
+            raise InvalidUserTypeException
+            users.append(user)
+        return users

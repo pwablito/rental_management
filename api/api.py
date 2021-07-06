@@ -169,3 +169,29 @@ def delete_user():
             "success": False,
             "message": "Missing fields",
         })
+
+
+def get_listings():
+    request_data = json.loads(request.data.decode('utf-8'))
+    try:
+        user = api.db.get_user_by_token(request_data["token"])
+        if not user:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(user) != api.user.AdminUser:
+            return json.dumps({
+                "success": False,
+                "message": "Only administrators can view user data",
+            })
+        return json.dumps({
+            "success": True,
+            "users": [user.to_dict() for user in api.db.get_all_users()]
+        })
+    except Exception as e:
+        raise e
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
+        })
