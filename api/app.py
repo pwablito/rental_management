@@ -13,5 +13,15 @@ app.add_url_rule('/api/update_user', view_func=api.update_user, methods=["POST"]
 app.add_url_rule('/api/get_listings', view_func=api.get_listings, methods=["POST"])
 app.add_url_rule('/api/create_listing', view_func=api.create_listing, methods=["POST"])
 
+### FOR DEVELOPMENT SERVER ###
+@app.route('/')
+def index():
+    return redirect("/index.html", code=302)
+
+@app.route('/<path:path>')
+def proxy(path):
+  return requests.get(f'http://localhost:8080/{path}').content
+### END DEVELOPMENT SERVER ###
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, use_reloader=True)
