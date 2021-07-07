@@ -66,34 +66,34 @@ def get_user(username):
         row = cursor.fetchone()
         if not row:
             raise error.UserNotFoundException
-        user = user.User(row[0], row[1], dateutil.parser.parse(
+        entry = user.User(row[0], row[1], dateutil.parser.parse(
             row[2]), row[4], row[5], row[6])
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
-                user.username,
-                user.name,
-                user.created_on,
-                user.password_hash,
-                user.password_salt,
-                user.token
+                entry.username,
+                entry.name,
+                entry.created_on,
+                entry.password_hash,
+                entry.password_salt,
+                entry.token
             )
         elif row[3] == REALTOR_TYPE:
             return user.RealtorUser(
-                user.username,
-                user.name,
-                user.created_on,
-                user.password_hash,
-                user.password_salt,
-                user.token
+                entry.username,
+                entry.name,
+                entry.created_on,
+                entry.password_hash,
+                entry.password_salt,
+                entry.token
             )
         elif row[3] == ADMIN_TYPE:
             return user.AdminUser(
-                user.username,
-                user.name,
-                user.created_on,
-                user.password_hash,
-                user.password_salt,
-                user.token
+                entry.username,
+                entry.name,
+                entry.created_on,
+                entry.password_hash,
+                entry.password_salt,
+                entry.token
             )
         raise InvalidUserTypeException
 
@@ -110,34 +110,34 @@ def get_user_by_token(token):
         row = cursor.fetchone()
         if not row:
             raise error.UserNotFoundException
-        user = user.User(row[0], row[1], dateutil.parser.parse(
+        entry = user.User(row[0], row[1], dateutil.parser.parse(
             row[2]), row[4], row[5], row[6])
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
-                user.username,
-                user.name,
-                user.created_on,
-                user.password_hash,
-                user.password_salt,
-                user.token
+                entry.username,
+                entry.name,
+                entry.created_on,
+                entry.password_hash,
+                entry.password_salt,
+                entry.token
             )
         elif row[3] == REALTOR_TYPE:
             return user.RealtorUser(
-                user.username,
-                user.name,
-                user.created_on,
-                user.password_hash,
-                user.password_salt,
-                user.token
+                entry.username,
+                entry.name,
+                entry.created_on,
+                entry.password_hash,
+                entry.password_salt,
+                entry.token
             )
         elif row[3] == ADMIN_TYPE:
             return user.AdminUser(
-                user.username,
-                user.name,
-                user.created_on,
-                user.password_hash,
-                user.password_salt,
-                user.token
+                entry.username,
+                entry.name,
+                entry.created_on,
+                entry.password_hash,
+                entry.password_salt,
+                entry.token
             )
         raise InvalidUserTypeException
 
@@ -152,7 +152,7 @@ def get_user_type_number(user):
     raise error.InvalidUserTypeException
 
 
-def insert_user(user):
+def insert_user(entry):
     try:
         with get_connection() as conn:
             cursor = conn.cursor()
@@ -162,13 +162,13 @@ def insert_user(user):
                 type, password_hash, password_salt, token)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
-                    user.username,
-                    user.name,
-                    user.created_on,
-                    get_user_type_number(user),
-                    user.password_hash,
-                    user.password_salt,
-                    user.token,
+                    entry.username,
+                    entry.name,
+                    entry.created_on,
+                    get_user_type_number(entry),
+                    entry.password_hash,
+                    entry.password_salt,
+                    entry.token,
                 )
             )
     except sqlite3.IntegrityError:
@@ -274,35 +274,35 @@ def get_all_users():
         rows = cursor.fetchall()
         users = []
         for row in rows:
-            user = user.User(row[0], row[1], dateutil.parser.parse(
+            entry = user.User(row[0], row[1], dateutil.parser.parse(
                 row[2]), row[4], row[5], row[6])
             if row[3] == CLIENT_TYPE:
                 return user.ClientUser(
-                    user.username,
-                    user.name,
-                    user.created_on,
-                    user.password_hash,
-                    user.password_salt,
-                    user.token
+                    entry.username,
+                    entry.name,
+                    entry.created_on,
+                    entry.password_hash,
+                    entry.password_salt,
+                    entry.token
                 )
             elif row[3] == REALTOR_TYPE:
                 return user.RealtorUser(
-                    user.username,
-                    user.name,
-                    user.created_on,
-                    user.password_hash,
-                    user.password_salt,
-                    user.token
+                    entry.username,
+                    entry.name,
+                    entry.created_on,
+                    entry.password_hash,
+                    entry.password_salt,
+                    entry.token
                 )
             elif row[3] == ADMIN_TYPE:
                 return user.AdminUser(
-                    user.username,
-                    user.name,
-                    user.created_on,
-                    user.password_hash,
-                    user.password_salt,
-                    user.token
+                    entry.username,
+                    entry.name,
+                    entry.created_on,
+                    entry.password_hash,
+                    entry.password_salt,
+                    entry.token
                 )
             raise InvalidUserTypeException
-            users.append(user)
+            users.append(entry)
         return users

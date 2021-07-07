@@ -37,6 +37,7 @@ export default {
   methods: {
       get_listings() {
           this.loading = true;
+          this.error_message = null;
           axios
           .post("/api/get_listings", {
             token: this.token,

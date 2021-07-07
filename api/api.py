@@ -14,12 +14,12 @@ def register():
     password_hash = util.get_hash(salt + request_data["password"])
     try:
         token = util.random_string()
-        user = user.ClientUser(
+        entry = user.ClientUser(
             request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, token)
-        db.insert_user(user)
+        db.insert_user(entry)
         return json.dumps({
             "success": True,
-            "user": user.to_dict(),
+            "user": entry.to_dict(),
             "token": token,
         })
     except error.UserAlreadyExistsException:
@@ -32,18 +32,18 @@ def register():
 def login():
     request_data = json.loads(request.data.decode('utf-8'))
     try:
-        user = db.get_user(request_data["username"])
+        entry = db.get_user(request_data["username"])
     except error.UserNotFoundException:
         return json.dumps({
             "success": False,
             "message": "Invalid username",
         })
-    if util.get_hash(user.password_salt + request_data["password"]) == user.password_hash:
+    if util.get_hash(entry.password_salt + request_data["password"]) == entry.password_hash:
         token = util.random_string()
-        db.update_token(user.username, token)
+        db.update_token(entry.username, token)
         return json.dumps({
             "success": True,
-            "user": user.to_dict(),
+            "user": entry.to_dict(),
             "token": token,
         })
     return json.dumps({
@@ -63,14 +63,14 @@ def update_user():
 def get_listings():
     request_data = json.loads(request.data.decode('utf-8'))
     try:
-        user = db.get_user_by_token(request_data["token"])
+        entry = db.get_user_by_token(request_data["token"])
         is_client = False
-        if not user:
+        if not entry:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
             })
-        if type(user) == user.ClientUser:
+        if type(entry) == user.ClientUser:
             is_client = True
         return json.dumps({
             "success": True,
@@ -88,13 +88,13 @@ def create_listing():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
         listing_id = util.random_string(length=20)
-        user = db.get_user_by_token(request_data["token"])
+        entry = db.get_user_by_token(request_data["token"])
         if not user:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
             })
-        if type(user) == user.ClientUser:
+        if type(entry) == user.ClientUser:
             return json.dumps({
                 "success": False,
                 "message": "Client user can not create listings",
@@ -125,13 +125,13 @@ def create_listing():
 def delete_listing():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
-        user = db.get_user_by_token(request_data["token"])
+        entry = db.get_user_by_token(request_data["token"])
         if not user:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
             })
-        if type(user) == user.ClientUser:
+        if type(entry) == user.ClientUser:
             return json.dumps({
                 "success": False,
                 "message": "Client user can not delete listings",
@@ -150,13 +150,13 @@ def delete_listing():
 def delete_user():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
-        user = db.get_user_by_token(request_data["token"])
-        if not user:
+        entry = db.get_user_by_token(request_data["token"])
+        if not entry:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
             })
-        if type(user) != user.AdminUser:
+        if type(entry) != user.AdminUser:
             return json.dumps({
                 "success": False,
                 "message": "Only administrators can not delete users",
@@ -175,20 +175,20 @@ def delete_user():
 def get_users():
     request_data = json.loads(request.data.decode('utf-8'))
     try:
-        user = db.get_user_by_token(request_data["token"])
-        if not user:
+        entry = db.get_user_by_token(request_data["token"])
+        if not entry:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
             })
-        if type(user) != user.AdminUser:
+        if type(entry) != user.AdminUser:
             return json.dumps({
                 "success": False,
                 "message": "Only administrators can view user data",
             })
         return json.dumps({
             "success": True,
-            "users": [user.to_dict() for user in db.get_all_users()]
+            "users": [current_user.to_dict() for current_user in db.get_all_users()]
         })
     except Exception as e:
         raise e
