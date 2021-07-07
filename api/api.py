@@ -5,6 +5,7 @@ import util
 import user
 import listing
 import db
+import error
 
 
 def register():
