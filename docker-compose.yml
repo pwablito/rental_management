@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+    proxy:
+        build:
+            context: ./proxy
+        ports:
+            - 8000:80
+        container_name: proxy
+        links:
+            - "client:client"
+            - "api:api"
+    client:
+        build: 
+            context: ./client
+        container_name: client
+    api:
+        build:
+            context: ./api
+        container_name: api

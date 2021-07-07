@@ -1,9 +1,9 @@
 import sqlite3
 import datetime
 import dateutil.parser
-import api.user
-import api.error
-import api.listing
+import user
+import error
+import listing
 
 
 CLIENT_TYPE = 1
@@ -65,11 +65,11 @@ def get_user(username):
         )
         row = cursor.fetchone()
         if not row:
-            raise api.error.UserNotFoundException
-        user = api.user.User(row[0], row[1], dateutil.parser.parse(
+            raise error.UserNotFoundException
+        user = user.User(row[0], row[1], dateutil.parser.parse(
             row[2]), row[4], row[5], row[6])
         if row[3] == CLIENT_TYPE:
-            return api.user.ClientUser(
+            return user.ClientUser(
                 user.username,
                 user.name,
                 user.created_on,
@@ -78,7 +78,7 @@ def get_user(username):
                 user.token
             )
         elif row[3] == REALTOR_TYPE:
-            return api.user.RealtorUser(
+            return user.RealtorUser(
                 user.username,
                 user.name,
                 user.created_on,
@@ -87,7 +87,7 @@ def get_user(username):
                 user.token
             )
         elif row[3] == ADMIN_TYPE:
-            return api.user.AdminUser(
+            return user.AdminUser(
                 user.username,
                 user.name,
                 user.created_on,
@@ -109,11 +109,11 @@ def get_user_by_token(token):
         )
         row = cursor.fetchone()
         if not row:
-            raise api.error.UserNotFoundException
-        user = api.user.User(row[0], row[1], dateutil.parser.parse(
+            raise error.UserNotFoundException
+        user = user.User(row[0], row[1], dateutil.parser.parse(
             row[2]), row[4], row[5], row[6])
         if row[3] == CLIENT_TYPE:
-            return api.user.ClientUser(
+            return user.ClientUser(
                 user.username,
                 user.name,
                 user.created_on,
@@ -122,7 +122,7 @@ def get_user_by_token(token):
                 user.token
             )
         elif row[3] == REALTOR_TYPE:
-            return api.user.RealtorUser(
+            return user.RealtorUser(
                 user.username,
                 user.name,
                 user.created_on,
@@ -131,7 +131,7 @@ def get_user_by_token(token):
                 user.token
             )
         elif row[3] == ADMIN_TYPE:
-            return api.user.AdminUser(
+            return user.AdminUser(
                 user.username,
                 user.name,
                 user.created_on,
@@ -143,13 +143,13 @@ def get_user_by_token(token):
 
 
 def get_user_type_number(user):
-    if type(user) == api.user.ClientUser:
+    if type(user) == user.ClientUser:
         return CLIENT_TYPE
-    if type(user) == api.user.RealtorUser:
+    if type(user) == user.RealtorUser:
         return REALTOR_TYPE
-    if type(user) == api.user.AdminType:
+    if type(user) == user.AdminType:
         return ADMIN_TYPE
-    raise api.error.InvalidUserTypeException
+    raise error.InvalidUserTypeException
 
 
 def insert_user(user):
@@ -172,7 +172,7 @@ def insert_user(user):
                 )
             )
     except sqlite3.IntegrityError:
-        raise api.error.UserAlreadyExistsException
+        raise error.UserAlreadyExistsException
 
 
 def update_token(username, token):
@@ -201,7 +201,7 @@ def get_all_listings(only_listed=False):
         rows = cursor.fetchall()
         listings = []
         for row in rows:
-            listings.append(api.listing.Listing(
+            listings.append(listing.Listing(
                 row[0],
                 row[1],
                 row[2],
@@ -274,10 +274,10 @@ def get_all_users():
         rows = cursor.fetchall()
         users = []
         for row in rows:
-            user = api.user.User(row[0], row[1], dateutil.parser.parse(
+            user = user.User(row[0], row[1], dateutil.parser.parse(
                 row[2]), row[4], row[5], row[6])
             if row[3] == CLIENT_TYPE:
-                return api.user.ClientUser(
+                return user.ClientUser(
                     user.username,
                     user.name,
                     user.created_on,
@@ -286,7 +286,7 @@ def get_all_users():
                     user.token
                 )
             elif row[3] == REALTOR_TYPE:
-                return api.user.RealtorUser(
+                return user.RealtorUser(
                     user.username,
                     user.name,
                     user.created_on,
@@ -295,7 +295,7 @@ def get_all_users():
                     user.token
                 )
             elif row[3] == ADMIN_TYPE:
-                return api.user.AdminUser(
+                return user.AdminUser(
                     user.username,
                     user.name,
                     user.created_on,

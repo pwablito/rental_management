@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm db.sqlite > /dev/null
+rm db.sqlite 2> /dev/null
 ./setup_db.py
