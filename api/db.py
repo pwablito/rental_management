@@ -142,12 +142,12 @@ def get_user_by_token(token):
         raise InvalidUserTypeException
 
 
-def get_user_type_number(user):
-    if type(user) == user.ClientUser:
+def get_user_type_number(user_to_evaluate):
+    if type(user_to_evaluate) == user.ClientUser:
         return CLIENT_TYPE
-    if type(user) == user.RealtorUser:
+    if type(user_to_evaluate) == user.RealtorUser:
         return REALTOR_TYPE
-    if type(user) == user.AdminType:
+    if type(user_to_evaluate) == user.AdminType:
         return ADMIN_TYPE
     raise error.InvalidUserTypeException
 
