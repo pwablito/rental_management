@@ -3,11 +3,9 @@
     <div id="loading_div" class="centered" v-if="this.loading">Loading</div>
     <div v-else>
       <p>Listings:</p>
-      <ul>
-        <p v-if="this.listings.length === 0">None found</p>
-        <li v-for="listing in this.listings" :key="listing.id">
-            {{listing}}
-        </li>
+      <p v-if="this.listings.length === 0">None found</p>
+      <ul v-else>
+        <ListingView v-for="listing in this.listings" :key="listing.id" :listing="listing" />
       </ul>
       <p class="red" v-if="this.error_message !== ''">{{this.error_message}}</p>
       <button class="btn btn-primary" @click="this.get_listings">Reload</button>
@@ -18,11 +16,15 @@
 <script>
 
 import axios from 'axios';
+import ListingView from './ListingView.vue';
 
 export default {
   name: 'BrowseView',
   props: {
       token: String,
+  },
+  components: {
+    ListingView,
   },
   data() {
       return {
