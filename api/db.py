@@ -147,7 +147,7 @@ def get_user_type_number(user_to_evaluate):
         return CLIENT_TYPE
     if type(user_to_evaluate) == user.RealtorUser:
         return REALTOR_TYPE
-    if type(user_to_evaluate) == user.AdminType:
+    if type(user_to_evaluate) == user.AdminUser:
         return ADMIN_TYPE
     raise error.InvalidUserTypeException
 
