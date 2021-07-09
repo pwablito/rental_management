@@ -6,6 +6,6 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY *.py .
-RUN python setup_db.py
+RUN python setup_db.py --add-admin
 
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0"]
