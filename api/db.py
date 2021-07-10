@@ -11,15 +11,15 @@ REALTOR_TYPE = 2
 ADMIN_TYPE = 3
 
 
-def get_connection(db_file="db.sqlite"):
+def get_connection(db_file):
     try:
         return sqlite3.connect(db_file)
     except sqlite3.Error as e:
         print("Unable to connect to database: {}".format(e))
 
 
-def setup_database():
-    with get_connection() as conn:
+def setup_database(db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -53,8 +53,8 @@ def setup_database():
         )
 
 
-def get_user(username):
-    with get_connection() as conn:
+def get_user(username, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -97,8 +97,8 @@ def get_user(username):
             )
         raise InvalidUserTypeException
 
-def get_user_by_token(token):
-    with get_connection() as conn:
+def get_user_by_token(token, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -152,9 +152,9 @@ def get_user_type_number(user_to_evaluate):
     raise error.InvalidUserTypeException
 
 
-def insert_user(entry):
+def insert_user(entry, db_file="db.sqlite"):
     try:
-        with get_connection() as conn:
+        with get_connection(db_file) as conn:
             cursor = conn.cursor()
             cursor.execute(
                 '''
@@ -175,8 +175,8 @@ def insert_user(entry):
         raise error.UserAlreadyExistsException
 
 
-def update_token(username, token):
-    with get_connection() as conn:
+def update_token(username, token, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -185,7 +185,7 @@ def update_token(username, token):
         )
 
 
-def get_all_listings(only_listed=False):
+def get_all_listings(only_listed=False, db_file="db.sqlite"):
     query_string = '''
                     SELECT id, name, description, floor_area, price,
                     rooms, bathrooms, created_on, latitude, longitude, is_listed
@@ -195,7 +195,7 @@ def get_all_listings(only_listed=False):
         query_string += '''
                         WHERE is_listed=1
                         '''
-    with get_connection() as conn:
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(query_string)
         rows = cursor.fetchall()
@@ -217,8 +217,8 @@ def get_all_listings(only_listed=False):
         return listings
 
 
-def insert_listing(listing):
-    with get_connection() as conn:
+def insert_listing(listing, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -241,18 +241,19 @@ def insert_listing(listing):
         )
 
 
-def delete_listing(id):
-    with get_connection() as conn:
+def delete_listing(id, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
             DELETE FROM listing WHERE id=?
             ''', (id,)
         )
+        conn.commit()
 
 
-def delete_user(username):
-    with get_connection() as conn:
+def delete_user(username, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -261,8 +262,8 @@ def delete_user(username):
         )
 
 
-def get_all_users():
-    with get_connection() as conn:
+def get_all_users(db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
@@ -277,32 +278,32 @@ def get_all_users():
             entry = user.User(row[0], row[1], dateutil.parser.parse(
                 row[2]), row[4], row[5], row[6])
             if row[3] == CLIENT_TYPE:
-                return user.ClientUser(
+                users.append(user.ClientUser(
                     entry.username,
                     entry.name,
                     entry.created_on,
                     entry.password_hash,
                     entry.password_salt,
                     entry.token
-                )
+                ))
             elif row[3] == REALTOR_TYPE:
-                return user.RealtorUser(
+                users.append(user.RealtorUser(
                     entry.username,
                     entry.name,
                     entry.created_on,
                     entry.password_hash,
                     entry.password_salt,
                     entry.token
-                )
+                ))
             elif row[3] == ADMIN_TYPE:
-                return user.AdminUser(
+                users.append(user.AdminUser(
                     entry.username,
                     entry.name,
                     entry.created_on,
                     entry.password_hash,
                     entry.password_salt,
                     entry.token
-                )
-            raise InvalidUserTypeException
-            users.append(entry)
+                ))
+            else:
+                raise InvalidUserTypeException
         return users
