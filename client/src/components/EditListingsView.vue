@@ -1,7 +1,7 @@
 <template>
-  <div id="editlistings">
+  <div id="editlistings" class="centered">
     <div v-for="listing in this.listings" :key="listing.id">
-      <EditListingView :listing="listing" />
+      <EditListingView :listing="listing" :token="token" @update_listings="get_listings" />
     </div>
 
     <button class="btn btn-primary" @click="this.get_listings">

@@ -109,6 +109,7 @@ export default {
   },
   props: {
     listing: Object,
+    token: String,
   },
   methods: {
     reset() {
@@ -120,12 +121,13 @@ export default {
       axios
         .post("/api/update_listing", {
           listing: this.edit_listing,
+          token: this.token,
         })
         .then((response) => {
           if (response.data.success) {
             this.listing = this.edit_listing;
           } else {
-            this.error_message = this.data.message;
+            this.error_message = response.data.message;
           }
         })
         .catch(() => {
@@ -140,17 +142,18 @@ export default {
       this.error_message = null;
       axios
         .post("/api/delete_listing", {
-          listing_id: this.listing.id,
+          id: this.listing.id,
+          token: this.token,
         })
         .then((response) => {
           if (response.data.success) {
-            alert("Success");
-            // TODO Maybe send a message up one level to destroy the listing in the client
+            this.$emit("update_listings");
           } else {
-            this.error_message = this.data.message;
+            this.error_message = response.data.message;
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.error_message = "Something went wrong";
         })
         .then(() => {
