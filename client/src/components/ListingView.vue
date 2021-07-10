@@ -1,72 +1,45 @@
 <template>
-  <div id="listview">
-    <div v-if="editing">
-        Edit
-        {{listing}}
-        <button @click="cancel_editing">Cancel</button>
-        <button @click="update">Done</button>
-    </div>
-    <div v-else>
-        <p>Name: {{listing.name}}</p>
-        <p>Description: {{listing.description}}</p>
-        <p>Floor Area: {{listing.floor_area}}</p>
-        <p>Bedrooms: {{listing.bedrooms}}</p>
-        <p>Bathrooms: {{listing.bathrooms}}</p>
-
-        <button @click="edit">Edit</button>
+  <div id="listingview">
+    <div>
+        <p>Name: {{this.listing.name}}</p>
+        <p>Description: {{this.listing.description}}</p>
+        <p>Floor Area: {{this.listing.floor_area}}</p>
+        <p>Price: {{this.listing.price}}</p>
+        <p>Rooms: {{this.listing.rooms}}</p>
+        <p>Bathrooms: {{this.listing.bathrooms}}</p>
+        <p>Latitude: {{this.listing.latitude}}</p>
+        <p>Longitude: {{this.listing.longitude}}</p>
+        <p>Created on: {{this.created_on_date}}</p>
 
     </div>
+    <p class="red centered" v-if="this.error_message">{{this.error_message}}</p>
   </div>
 </template>
-
 <script>
 
-import axios from 'axios';
-
 export default {
-  name: "ListView",
+  name: "ListingView",
   data() {
     return {
-      editing: false,
-      edit_listing: {},
       loading: false,
-      error_message: null,
     };
   },
   props: {
       listing: Object,
   },
-  methods: {
-      edit() {
-          this.editing = true;
-      },
-      cancel_editing() {
-          this.editing = false;
-      },
-      update() {
-          this.loading = true;
-          this.error_message = null;
-          axios.post(
-              "/api/update_listing", {
-                  listing: this.edit_listing,
-              }
-          ).then((response) => {
-              if (response.data.success) {
-                  this.listing = this.edit_listing;
-              } else {
-                  this.error_message = this.data.message;
-              }
-          }).error(() => {
-              this.error_message = "Something went wrong";
-          }).then(() => {
-              this.loading = false;
-          })
+  computed: {
+      created_on_date() {
+          return Date.parse(this.listing.created_on)
       }
-  },
-  created() {
-      this.edit_listing = this.listing;
   }
 };
 </script>
 
-<style></style>
+<style>
+.red {
+    color: red;
+}
+.centered {
+    text-align: center;
+}
+</style>
