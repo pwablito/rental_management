@@ -12,6 +12,7 @@ app.add_url_rule('/api/login', view_func=api.login, methods=["POST"])
 app.add_url_rule('/api/update_user', view_func=api.update_user, methods=["POST"])
 app.add_url_rule('/api/get_listings', view_func=api.get_listings, methods=["POST"])
 app.add_url_rule('/api/create_listing', view_func=api.create_listing, methods=["POST"])
+app.add_url_rule('/api/delete_listing', view_func=api.delete_listing, methods=["POST"])
 
 ### FOR DEVELOPMENT SERVER ###
 @app.route('/')

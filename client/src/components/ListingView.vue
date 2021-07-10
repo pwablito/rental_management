@@ -12,7 +12,6 @@
         <p>Created on: {{this.created_on_date}}</p>
 
     </div>
-    <p class="red centered" v-if="this.error_message">{{this.error_message}}</p>
   </div>
 </template>
 <script>
@@ -29,7 +28,7 @@ export default {
   },
   computed: {
       created_on_date() {
-          return Date.parse(this.listing.created_on)
+        return Date.parse(this.listing.created_on).toLocaleString();
       }
   }
 };

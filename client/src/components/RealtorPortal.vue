@@ -6,6 +6,7 @@
     <b-tab title="Profile" active><ProfileView :token="this.token" :user="this.user" @logout="logout" /></b-tab>
     <b-tab title="Browse"><BrowseView :token="this.token"/></b-tab>
     <b-tab title="Create"><CreateListingView :token="this.token"/></b-tab>
+    <b-tab title="Edit"><EditListingsView :token="this.token"/></b-tab>
   </b-tabs>
 </div>
   </div>
@@ -15,6 +16,7 @@
 import ProfileView from './ProfileView.vue';
 import BrowseView from './BrowseView.vue';
 import CreateListingView from './CreateListingView.vue';
+import EditListingsView from './EditListingsView.vue';
 
 export default {
   name: 'RealtorPortal',
@@ -26,6 +28,7 @@ export default {
     ProfileView,
     BrowseView,
     CreateListingView,
+    EditListingsView,
   },
   methods: {
     logout() {

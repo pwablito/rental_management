@@ -106,7 +106,7 @@
 import axios from "axios";
 
 export default {
-  name: "RealtorPortal",
+  name: "CreateListingView",
   props: {
     token: String,
   },
