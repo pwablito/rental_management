@@ -55,6 +55,17 @@ def login():
 def update_user():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
+        entry = db.get_user_by_token(request_data["token"])
+        if not entry:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(entry) != user.AdminUser:
+            return json.dumps({
+                "success": False,
+                "message": "Only administrators can not delete users",
+            })
         user_dict = request_data["user"]
         update_user = None
         if user_dict["type"] == "client":
