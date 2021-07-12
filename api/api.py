@@ -53,11 +53,27 @@ def login():
 
 
 def update_user():
-    request_data = json.loads(request.data.decode('utf-8'))
-    return json.dumps({
-        "success": False,
-        "message": "Not implemented",
-    })
+    try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        user_dict = request_data["user"]
+        update_user = None
+        if user_dict["type"] == "client":
+            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None)
+        elif user_dict["type"] == "realtor":
+            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None)
+        elif user_dict["type"] == "admin":
+            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None)
+        else:
+            raise error.InvalidUserTypeException
+        db.update_user(update_user)
+        return json.dumps({
+            "success": True,
+        })
+    except:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong"
+        })
 
 
 def get_listings():

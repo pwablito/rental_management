@@ -307,3 +307,6 @@ def get_all_users(db_file="db.sqlite"):
             else:
                 raise InvalidUserTypeException
         return users
+
+def update_user(user_to_update):
+    raise NotImplementedError
