@@ -30,7 +30,8 @@ def setup_database(db_file="db.sqlite"):
                 type INTEGER NOT NULL,
                 password_hash TEXT NOT NULL,
                 password_salt TEXT NOT NULL,
-                token TEXT
+                token TEXT,
+                token_created TEXT
             )
             '''
         )
@@ -59,7 +60,7 @@ def get_user(username, db_file="db.sqlite"):
         cursor.execute(
             '''
             SELECT username, name, created_on, type,
-            password_hash, password_salt, token
+            password_hash, password_salt, token, token_created
             FROM user WHERE username=?
             ''', (username,)
         )
@@ -67,7 +68,7 @@ def get_user(username, db_file="db.sqlite"):
         if not row:
             raise error.UserNotFoundException
         entry = user.User(row[0], row[1], dateutil.parser.parse(
-            row[2]), row[4], row[5], row[6])
+            row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7])
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
                 entry.username,
@@ -75,7 +76,8 @@ def get_user(username, db_file="db.sqlite"):
                 entry.created_on,
                 entry.password_hash,
                 entry.password_salt,
-                entry.token
+                entry.token,
+                entry.token_created,
             )
         elif row[3] == REALTOR_TYPE:
             return user.RealtorUser(
@@ -84,7 +86,8 @@ def get_user(username, db_file="db.sqlite"):
                 entry.created_on,
                 entry.password_hash,
                 entry.password_salt,
-                entry.token
+                entry.token,
+                entry.token_created,
             )
         elif row[3] == ADMIN_TYPE:
             return user.AdminUser(
@@ -93,7 +96,8 @@ def get_user(username, db_file="db.sqlite"):
                 entry.created_on,
                 entry.password_hash,
                 entry.password_salt,
-                entry.token
+                entry.token,
+                entry.token_created,
             )
         raise InvalidUserTypeException
 
@@ -103,7 +107,7 @@ def get_user_by_token(token, db_file="db.sqlite"):
         cursor.execute(
             '''
             SELECT username, name, created_on, type,
-            password_hash, password_salt, token
+            password_hash, password_salt, token, token_created
             FROM user WHERE token=?
             ''', (token,)
         )
@@ -111,7 +115,7 @@ def get_user_by_token(token, db_file="db.sqlite"):
         if not row:
             raise error.UserNotFoundException
         entry = user.User(row[0], row[1], dateutil.parser.parse(
-            row[2]), row[4], row[5], row[6])
+            row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]))
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
                 entry.username,
@@ -119,7 +123,8 @@ def get_user_by_token(token, db_file="db.sqlite"):
                 entry.created_on,
                 entry.password_hash,
                 entry.password_salt,
-                entry.token
+                entry.token,
+                entry.token_created,
             )
         elif row[3] == REALTOR_TYPE:
             return user.RealtorUser(
@@ -128,7 +133,8 @@ def get_user_by_token(token, db_file="db.sqlite"):
                 entry.created_on,
                 entry.password_hash,
                 entry.password_salt,
-                entry.token
+                entry.token,
+                entry.token_created,
             )
         elif row[3] == ADMIN_TYPE:
             return user.AdminUser(
@@ -137,7 +143,8 @@ def get_user_by_token(token, db_file="db.sqlite"):
                 entry.created_on,
                 entry.password_hash,
                 entry.password_salt,
-                entry.token
+                entry.token,
+                entry.token_created,
             )
         raise InvalidUserTypeException
 
@@ -159,7 +166,7 @@ def insert_user(entry, db_file="db.sqlite"):
             cursor.execute(
                 '''
                 INSERT INTO user (username, name, created_on,
-                type, password_hash, password_salt, token)
+                type, password_hash, password_salt)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     entry.username,
@@ -168,20 +175,19 @@ def insert_user(entry, db_file="db.sqlite"):
                     get_user_type_number(entry),
                     entry.password_hash,
                     entry.password_salt,
-                    entry.token,
                 )
             )
     except sqlite3.IntegrityError:
         raise error.UserAlreadyExistsException
 
 
-def update_token(username, token, db_file="db.sqlite"):
+def set_token(username, token, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
         cursor = conn.cursor()
         cursor.execute(
             '''
-            UPDATE user SET token=? WHERE username=?
-            ''', (token, username,)
+            UPDATE user SET token=?, token_created=? WHERE username=?
+            ''', (token, datetime.datetime.now(), username,)
         )
 
 

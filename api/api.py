@@ -13,10 +13,11 @@ def register():
     salt = util.random_string()
     password_hash = util.get_hash(salt + request_data["password"])
     try:
-        token = util.random_string()
         entry = user.ClientUser(
-            request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, token)
+            request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, None, None)
         db.insert_user(entry)
+        token = util.random_string()
+        db.set_token(entry.username, token)
         return json.dumps({
             "success": True,
             "user": entry.to_dict(),
@@ -40,7 +41,7 @@ def login():
         })
     if util.get_hash(entry.password_salt + request_data["password"]) == entry.password_hash:
         token = util.random_string()
-        db.update_token(entry.username, token)
+        db.set_token(entry.username, token)
         return json.dumps({
             "success": True,
             "user": entry.to_dict(),
@@ -56,6 +57,11 @@ def update_user():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
         if not entry:
             return json.dumps({
                 "success": False,
@@ -69,11 +75,11 @@ def update_user():
         user_dict = request_data["user"]
         update_user = None
         if user_dict["type"] == "client":
-            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None)
+            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None, None)
         elif user_dict["type"] == "realtor":
-            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None)
+            update_user = user.RealtorUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None, None)
         elif user_dict["type"] == "admin":
-            update_user = user.ClientUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None)
+            update_user = user.AdminUser(user_dict["username"], user_dict["name"], user_dict["created_on"], None, None, None, None)
         else:
             raise error.InvalidUserTypeException
         db.update_user(update_user)
@@ -91,6 +97,11 @@ def get_listings():
     request_data = json.loads(request.data.decode('utf-8'))
     try:
         entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
         is_client = False
         if not entry:
             return json.dumps({
@@ -116,6 +127,11 @@ def create_listing():
         request_data = json.loads(request.data.decode('utf-8'))
         listing_id = util.random_string(length=20)
         entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
         if not user:
             return json.dumps({
                 "success": False,
@@ -153,6 +169,11 @@ def delete_listing():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
         if not user:
             return json.dumps({
                 "success": False,
@@ -178,6 +199,11 @@ def delete_user():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
         if not entry:
             return json.dumps({
                 "success": False,
@@ -203,6 +229,11 @@ def get_users():
     request_data = json.loads(request.data.decode('utf-8'))
     try:
         entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
         if not entry:
             return json.dumps({
                 "success": False,
