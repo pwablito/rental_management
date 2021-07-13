@@ -132,7 +132,7 @@ def create_listing():
                 "success": False,
                 "message": "Token expired"
             })
-        if not user:
+        if not entry:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
@@ -174,7 +174,7 @@ def delete_listing():
                 "success": False,
                 "message": "Token expired"
             })
-        if not user:
+        if not entry:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
@@ -253,4 +253,49 @@ def get_users():
         return json.dumps({
             "success": False,
             "message": "Something went wrong",
+        })
+
+def create_user():
+    try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
+        if not entry:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(entry) != user.AdminUser:
+            return json.dumps({
+                "success": False,
+                "message": "Only administrators can create users",
+            })
+        salt = util.random_string()
+        new_user = user.User(
+            request_data["username"],
+            request_data["name"],
+            datetime.datetime.now(),
+            util.get_hash(salt + request_data["password"]),
+            salt,
+            None,
+            None,
+        )
+        if request_data["type"] == "client":
+            new_user = new_user.to_client_user()
+        if request_data["type"] == "realtor":
+            new_user = new_user.to_realtor_user()
+        if request_data["type"] == "admin":
+            new_user = new_user.to_admin_user()
+        db.insert_user(new_user)
+        return json.dumps({
+            "success": True,
+        })
+    except KeyError as e:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
         })

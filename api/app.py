@@ -16,6 +16,7 @@ app.add_url_rule('/api/delete_listing', view_func=api.delete_listing, methods=["
 app.add_url_rule('/api/delete_user', view_func=api.delete_user, methods=["POST"])
 app.add_url_rule('/api/get_users', view_func=api.get_users, methods=["POST"])
 app.add_url_rule('/api/update_user', view_func=api.update_user, methods=["POST"])
+app.add_url_rule('/api/create_user', view_func=api.create_user, methods=["POST"])
 
 ### FOR DEVELOPMENT SERVER ###
 @app.route('/')

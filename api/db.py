@@ -67,7 +67,7 @@ def get_user(username, db_file="db.sqlite"):
         row = cursor.fetchone()
         if not row:
             raise error.UserNotFoundException
-        entry = user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]))
+        entry = user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]) if row[7] else None)
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
                 entry.username,
@@ -110,11 +110,11 @@ def get_user_by_token(token, db_file="db.sqlite"):
             FROM user WHERE token=?
             ''', (token,)
         )
-        row=cursor.fetchone()
+        row = cursor.fetchone()
         if not row:
             raise error.UserNotFoundException
         entry=user.User(row[0], row[1], dateutil.parser.parse(
-            row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]))
+            row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]) if row[7] else None)
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
                 entry.username,
@@ -273,7 +273,7 @@ def get_all_users(db_file="db.sqlite"):
         cursor.execute(
             '''
             SELECT username, name, created_on, type,
-            password_hash, password_salt, token
+            password_hash, password_salt, token, token_created
             FROM user
             '''
         )
@@ -281,7 +281,7 @@ def get_all_users(db_file="db.sqlite"):
         users=[]
         for row in rows:
             entry=user.User(row[0], row[1], dateutil.parser.parse(
-                row[2]), row[4], row[5], row[6])
+                row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]) if row[7] else None)
             if row[3] == CLIENT_TYPE:
                 users.append(user.ClientUser(
                     entry.username,
@@ -289,7 +289,8 @@ def get_all_users(db_file="db.sqlite"):
                     entry.created_on,
                     entry.password_hash,
                     entry.password_salt,
-                    entry.token
+                    entry.token,
+                    entry.token_created,
                 ))
             elif row[3] == REALTOR_TYPE:
                 users.append(user.RealtorUser(
@@ -298,7 +299,8 @@ def get_all_users(db_file="db.sqlite"):
                     entry.created_on,
                     entry.password_hash,
                     entry.password_salt,
-                    entry.token
+                    entry.token,
+                    entry.token_created,
                 ))
             elif row[3] == ADMIN_TYPE:
                 users.append(user.AdminUser(
@@ -307,7 +309,8 @@ def get_all_users(db_file="db.sqlite"):
                     entry.created_on,
                     entry.password_hash,
                     entry.password_salt,
-                    entry.token
+                    entry.token,
+                    entry.token_created,
                 ))
             else:
                 raise InvalidUserTypeException

@@ -20,6 +20,14 @@ class User:
     def authenticate(self, password):
         return util.get_hash(password + self.password_salt) == self.password_hash
 
+    def to_client_user(self):
+        return ClientUser(self.username, self.name, self.created_on,  self.password_hash, self.password_salt, self.token, self.token_created)
+
+    def to_realtor_user(self):
+        return RealtorUser(self.username, self.name, self.created_on,  self.password_hash, self.password_salt, self.token, self.token_created)
+
+    def to_admin_user(self):
+        return AdminUser(self.username, self.name, self.created_on,  self.password_hash, self.password_salt, self.token, self.token_created)
 
 class ClientUser(User):
     def to_dict(self):
