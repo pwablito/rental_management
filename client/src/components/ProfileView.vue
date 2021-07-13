@@ -1,5 +1,5 @@
 <template>
-  <div id="profileview">
+  <div id="profileview" class="centered">
       <table>
           <tbody>
               <tr>
@@ -16,11 +16,11 @@
               </tr>
               <tr>
                   <td>Created</td>
-                  <td>{{user.created_on}}</td>
+                  <td>{{user_created}}</td>
               </tr>
           </tbody>
       </table>
-      <button class="centered btn btn-danger" @click="logout">Logout</button>
+      <button class="btn btn-danger" @click="logout">Logout</button>
   </div>
 </template>
 
@@ -36,7 +36,18 @@ export default {
       logout() {
           this.$emit("logout");
       }
-  }
+  },
+  computed: {
+    user_created() {
+      return new Date(
+        this.user.created_on
+      ).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      })
+    }
+  },
 }
 </script>
 
