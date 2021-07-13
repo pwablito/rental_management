@@ -199,15 +199,15 @@ def delete_user():
     try:
         request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user_by_token(request_data["token"])
-        if util.token_is_expired(entry.token_created):
-            return json.dumps({
-                "success": False,
-                "message": "Token expired"
-            })
         if not entry:
             return json.dumps({
                 "success": False,
                 "message": "Invalid token",
+            })
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
             })
         if type(entry) != user.AdminUser:
             return json.dumps({

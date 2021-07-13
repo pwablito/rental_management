@@ -316,5 +316,7 @@ def get_all_users(db_file="db.sqlite"):
                 raise InvalidUserTypeException
         return users
 
-def update_user(user_to_update):
+def update_user(username, name, type, password_hash, password_salt, db_file="db.sqlite"):
+    with get_connection(db_file) as connection:
+        pass
     raise NotImplementedError
