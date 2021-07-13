@@ -33,8 +33,6 @@
       </div>
       <div class="form-group">
         <label for="user_type">Type</label>
-        <!-- <b-form-select v-model="this.type_selected" :options="this.options" required >
-        </b-form-select> -->
         <b-form-select v-model="type.select.selected">
           <option
             v-for="(select, index) in type.select.options"
