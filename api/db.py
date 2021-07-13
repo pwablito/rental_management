@@ -67,8 +67,7 @@ def get_user(username, db_file="db.sqlite"):
         row = cursor.fetchone()
         if not row:
             raise error.UserNotFoundException
-        entry = user.User(row[0], row[1], dateutil.parser.parse(
-            row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7])
+        entry = user.User(row[0], row[1], dateutil.parser.parse(row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]))
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
                 entry.username,
@@ -103,7 +102,7 @@ def get_user(username, db_file="db.sqlite"):
 
 def get_user_by_token(token, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(
             '''
             SELECT username, name, created_on, type,
@@ -111,10 +110,10 @@ def get_user_by_token(token, db_file="db.sqlite"):
             FROM user WHERE token=?
             ''', (token,)
         )
-        row = cursor.fetchone()
+        row=cursor.fetchone()
         if not row:
             raise error.UserNotFoundException
-        entry = user.User(row[0], row[1], dateutil.parser.parse(
+        entry=user.User(row[0], row[1], dateutil.parser.parse(
             row[2]), row[4], row[5], row[6], dateutil.parser.parse(row[7]))
         if row[3] == CLIENT_TYPE:
             return user.ClientUser(
@@ -162,12 +161,12 @@ def get_user_type_number(user_to_evaluate):
 def insert_user(entry, db_file="db.sqlite"):
     try:
         with get_connection(db_file) as conn:
-            cursor = conn.cursor()
+            cursor=conn.cursor()
             cursor.execute(
                 '''
                 INSERT INTO user (username, name, created_on,
                 type, password_hash, password_salt)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?)
                 ''', (
                     entry.username,
                     entry.name,
@@ -183,7 +182,7 @@ def insert_user(entry, db_file="db.sqlite"):
 
 def set_token(username, token, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(
             '''
             UPDATE user SET token=?, token_created=? WHERE username=?
@@ -192,7 +191,7 @@ def set_token(username, token, db_file="db.sqlite"):
 
 
 def get_all_listings(only_listed=False, db_file="db.sqlite"):
-    query_string = '''
+    query_string='''
                     SELECT id, name, description, floor_area, price,
                     rooms, bathrooms, created_on, latitude, longitude, is_listed
                     FROM listing
@@ -202,10 +201,10 @@ def get_all_listings(only_listed=False, db_file="db.sqlite"):
                         WHERE is_listed=1
                         '''
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(query_string)
-        rows = cursor.fetchall()
-        listings = []
+        rows=cursor.fetchall()
+        listings=[]
         for row in rows:
             listings.append(listing.Listing(
                 row[0],
@@ -225,7 +224,7 @@ def get_all_listings(only_listed=False, db_file="db.sqlite"):
 
 def insert_listing(listing, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(
             '''
             INSERT INTO listing (id, name, description, floor_area,
@@ -249,7 +248,7 @@ def insert_listing(listing, db_file="db.sqlite"):
 
 def delete_listing(id, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(
             '''
             DELETE FROM listing WHERE id=?
@@ -260,7 +259,7 @@ def delete_listing(id, db_file="db.sqlite"):
 
 def delete_user(username, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(
             '''
             DELETE FROM user WHERE username=?
@@ -270,7 +269,7 @@ def delete_user(username, db_file="db.sqlite"):
 
 def get_all_users(db_file="db.sqlite"):
     with get_connection(db_file) as conn:
-        cursor = conn.cursor()
+        cursor=conn.cursor()
         cursor.execute(
             '''
             SELECT username, name, created_on, type,
@@ -278,10 +277,10 @@ def get_all_users(db_file="db.sqlite"):
             FROM user
             '''
         )
-        rows = cursor.fetchall()
-        users = []
+        rows=cursor.fetchall()
+        users=[]
         for row in rows:
-            entry = user.User(row[0], row[1], dateutil.parser.parse(
+            entry=user.User(row[0], row[1], dateutil.parser.parse(
                 row[2]), row[4], row[5], row[6])
             if row[3] == CLIENT_TYPE:
                 users.append(user.ClientUser(

@@ -1,14 +1,14 @@
 import util
 
 class User:
-    def __init__(self, username, name, created_on, password_hash, password_salt, token_created):
+    def __init__(self, username, name, created_on, password_hash, password_salt, token, token_created):
         self.username = username
         self.name = name
         self.created_on = created_on
         self.password_hash = password_hash
         self.password_salt = password_salt
         self.token = token
-        self.token_creted = token_created
+        self.token_created = token_created
 
     def to_dict(self):
         return {
