@@ -39,8 +39,9 @@
           <option
             v-for="(select, index) in type.select.options"
             :key="index"
-            :value="select">
-            {{select}}
+            :value="select"
+          >
+            {{ select }}
           </option>
         </b-form-select>
       </div>
@@ -107,6 +108,7 @@ export default {
       this.user.name = "";
       this.user.username = "";
       this.user.password = "";
+      this.type.select.selected = "client";
     },
   },
 };
