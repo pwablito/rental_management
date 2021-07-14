@@ -147,7 +147,7 @@ export default {
         token: this.token,
       }
       if (this.edit_password !== "") {
-        this.data.password = this.edit_password;
+        data.password = this.edit_password;
       }
       axios
         .post("/api/update_user", data)
