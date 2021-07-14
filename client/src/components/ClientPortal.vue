@@ -3,8 +3,8 @@
     <h2 class="centered">Client Portal</h2>
     <div>
   <b-tabs content-class="mt-3" align="center" pills>
-    <b-tab title="Profile" active><ProfileView :token="this.token" :user="this.user" @logout="logout" /></b-tab>
-    <b-tab title="Browse"><BrowseView :token="this.token"/></b-tab>
+    <b-tab title="Profile"><ProfileView :token="this.token" :user="this.user" @logout="logout" /></b-tab>
+    <b-tab title="Browse" active><BrowseView :token="this.token"/></b-tab>
   </b-tabs>
 </div>
   </div>
