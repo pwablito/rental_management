@@ -20,7 +20,7 @@
         <div v-if="listing.is_listed">X</div>
       </div>
       <div class="col-2 item">
-        <button @click="$bvModal.show(modal_id)" class="btn btn-secondary">
+        <button @click="toggle_editing" class="btn btn-secondary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -55,113 +55,120 @@
       </div>
     </div>
 
+
+    <b-modal
+      :id="modal_id"
+      title="Edit Listing"
+      hide-footer
+      v-model="this.editing"
+    >
+      <form @submit="submit_update_listing">
+        <div class="form-group">
+          <label for="listing_name">Name</label>
+          <input
+            type="text"
+            v-model="edit_listing.name"
+            class="form-control"
+            id="listing_name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_description">Description</label>
+          <input
+            type="text"
+            v-model="edit_listing.description"
+            class="form-control"
+            id="listing_description"
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_floor_area">Floor Area (square feet)</label>
+          <input
+            type="number"
+            min="0"
+            max="1000000"
+            v-model="edit_listing.floor_area"
+            class="form-control"
+            id="listing_floor_area"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_price">Price per Month in USD</label>
+          <input
+            type="number"
+            min="0"
+            max="1000000"
+            v-model="edit_listing.price"
+            class="form-control"
+            id="listing_price"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_rooms"># Rooms</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            v-model="edit_listing.rooms"
+            class="form-control"
+            id="listing_rooms"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_bathrooms"># Bathrooms</label>
+          <input
+            type="number"
+            min="0"
+            max="1000"
+            v-model="edit_listing.bathrooms"
+            class="form-control"
+            id="listing_bathrooms"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_latitude">Latitude</label>
+          <input
+            type="number"
+            min="-90"
+            max="90"
+            step="0.0001"
+            v-model="edit_listing.latitude"
+            class="form-control"
+            id="listing_latitude"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_longitude">Longitude</label>
+          <input
+            type="number"
+            min="-180"
+            max="180"
+            step="0.0001"
+            v-model="edit_listing.longitude"
+            class="form-control"
+            id="listing_longitude"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <button class="btn btn-danger" @click="reset_edits">
+            Reset
+          </button>
+          <button class="btn btn-success" type="submit">
+            Finished
+          </button>
+        </div>
+      </form>
+
     <p class="red centered" v-if="this.error_message">
       {{ this.error_message }}
     </p>
-
-    <b-modal :id="modal_id" title="Edit Listing" hide-footer>
-      <div class="form-group">
-        <label for="listing_name">Name</label>
-        <input
-          type="text"
-          v-model="edit_listing.name"
-          class="form-control"
-          id="listing_name"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_description">Description</label>
-        <input
-          type="text"
-          v-model="edit_listing.description"
-          class="form-control"
-          id="listing_description"
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_floor_area">Floor Area (square feet)</label>
-        <input
-          type="number"
-          min="0"
-          max="1000000"
-          v-model="edit_listing.floor_area"
-          class="form-control"
-          id="listing_floor_area"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_price">Price per Month in USD</label>
-        <input
-          type="number"
-          min="0"
-          max="1000000"
-          v-model="edit_listing.price"
-          class="form-control"
-          id="listing_price"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_rooms"># Rooms</label>
-        <input
-          type="number"
-          min="0"
-          max="100"
-          v-model="edit_listing.rooms"
-          class="form-control"
-          id="listing_rooms"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_bathrooms"># Bathrooms</label>
-        <input
-          type="number"
-          min="0"
-          max="1000"
-          v-model="edit_listing.bathrooms"
-          class="form-control"
-          id="listing_bathrooms"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_latitude">Latitude</label>
-        <input
-          type="number"
-          min="-90"
-          max="90"
-          step="0.0001"
-          v-model="edit_listing.latitude"
-          class="form-control"
-          id="listing_latitude"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="listing_longitude">Longitude</label>
-        <input
-          type="number"
-          min="-180"
-          max="180"
-          step="0.0001"
-          v-model="edit_listing.longitude"
-          class="form-control"
-          id="listing_longitude"
-          required
-        />
-      </div>
-      <div class="form-group">
-          
-        <button class="btn btn-danger" @click="reset_edits">
-          Reset
-        </button>
-        <button class="btn btn-success" @click="update_listing">
-          Finished
-        </button>
-      </div>
     </b-modal>
   </div>
 </template>
@@ -173,6 +180,7 @@ export default {
   name: "EditListingView",
   data() {
     return {
+      editing: false,
       edit_listing: {},
       loading: false,
       error_message: null,
@@ -209,7 +217,7 @@ export default {
         .then((response) => {
           if (response.data.success) {
             this.listing = this.edit_listing;
-            this.$emit("update_listings")
+            this.$emit("update_listings");
           } else {
             this.error_message = response.data.message;
           }
@@ -220,6 +228,10 @@ export default {
         .then(() => {
           this.loading = false;
         });
+    },
+    submit_update_listing(e) {
+      e.preventDefault();
+      this.update_listing();
     },
     delete_listing() {
       this.loading = true;
@@ -246,6 +258,9 @@ export default {
     },
     reset_edits() {
       this.edit_listing = Object.assign({}, this.listing);
+    },
+    toggle_editing() {
+      this.editing = !this.editing;
     },
   },
   created() {

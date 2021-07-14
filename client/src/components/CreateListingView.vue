@@ -21,6 +21,16 @@
         />
       </div>
       <div class="form-group">
+        <label for="listing_description">Realtor Name</label>
+        <input
+          type="text"
+          v-model="listing.realtor"
+          class="form-control"
+          id="listing_realtor"
+          required
+        />
+      </div>
+      <div class="form-group">
         <label for="listing_floor_area">Floor Area (square feet)</label>
         <input
           type="number"
@@ -123,6 +133,7 @@ export default {
         bathrooms: "",
         latitude: "",
         longitude: "",
+        realtor: "",
       },
       error_message: "",
     };
@@ -142,10 +153,10 @@ export default {
           bathrooms: this.listing.bathrooms,
           latitude: this.listing.latitude,
           longitude: this.listing.longitude,
+          realtor: this.listing.realtor,
         })
         .then((response) => {
           if (response.data.success) {
-            // Do something
             alert("Success");
             this.clear();
           } else {
@@ -166,6 +177,7 @@ export default {
       this.listing.bathrooms = "";
       this.listing.latitude = "";
       this.listing.longitude = "";
+      this.listing.realtor = "";
     },
   },
 };

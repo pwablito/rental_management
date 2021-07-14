@@ -153,7 +153,8 @@ def create_listing():
             datetime.datetime.now(),
             request_data["latitude"],
             request_data["longitude"],
-            True
+            True,
+            request_data["realtor"],
         ))
         return json.dumps({
             "success": True,
@@ -299,3 +300,10 @@ def create_user():
             "success": False,
             "message": "Missing fields",
         })
+
+
+def update_listing():
+    return json.dumps({
+        "success": False,
+        "message": "Not implemented"
+    })

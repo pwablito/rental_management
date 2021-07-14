@@ -48,7 +48,8 @@ def setup_database(db_file="db.sqlite"):
                 created_on INTEGER NOT NULL,
                 latitude REAL NOT NULL,
                 longitude REAL NOT NULL,
-                is_listed INTEGER NOT NULL
+                is_listed INTEGER NOT NULL,
+                realtor TEXT NOT NULL
             )
             '''
         )
@@ -193,7 +194,8 @@ def set_token(username, token, db_file="db.sqlite"):
 def get_all_listings(only_listed=False, db_file="db.sqlite"):
     query_string='''
                     SELECT id, name, description, floor_area, price,
-                    rooms, bathrooms, created_on, latitude, longitude, is_listed
+                    rooms, bathrooms, created_on, latitude, longitude,
+                    is_listed, realtor
                     FROM listing
                     '''
     if only_listed:
@@ -218,6 +220,7 @@ def get_all_listings(only_listed=False, db_file="db.sqlite"):
                 row[8],
                 row[9],
                 True if row[10] != 0 else False,
+                row[11],
             ))
         return listings
 
@@ -228,8 +231,9 @@ def insert_listing(listing, db_file="db.sqlite"):
         cursor.execute(
             '''
             INSERT INTO listing (id, name, description, floor_area,
-            price, rooms, bathrooms, created_on, latitude, longitude, is_listed)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            price, rooms, bathrooms, created_on, latitude, longitude,
+            is_listed, realtor)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 listing.id,
                 listing.name,
@@ -241,7 +245,8 @@ def insert_listing(listing, db_file="db.sqlite"):
                 listing.created_on,
                 listing.latitude,
                 listing.longitude,
-                1 if listing.is_listed else 0
+                1 if listing.is_listed else 0,
+                listing.realtor,
             )
         )
 
@@ -319,4 +324,7 @@ def get_all_users(db_file="db.sqlite"):
 def update_user(username, name, type, password_hash, password_salt, db_file="db.sqlite"):
     with get_connection(db_file) as connection:
         pass
+    raise NotImplementedError
+
+def update_listing(listing):
     raise NotImplementedError

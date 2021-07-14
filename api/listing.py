@@ -1,5 +1,5 @@
 class Listing:
-    def __init__(self, id, name, description, floor_area, price, rooms, bathrooms, created_on, latitude, longitude, is_listed):
+    def __init__(self, id, name, description, floor_area, price, rooms, bathrooms, created_on, latitude, longitude, is_listed, realtor):
         self.id = id
         self.name = name
         self.description = description
@@ -11,6 +11,7 @@ class Listing:
         self.latitude = latitude
         self.longitude = longitude
         self.is_listed = is_listed
+        self.realtor = realtor
 
     def to_dict(self):
         return {
@@ -25,4 +26,5 @@ class Listing:
             "latitude": self.latitude,
             "longitude": self.longitude,
             "is_listed": self.is_listed,
+            "realtor": self.realtor,
         }
