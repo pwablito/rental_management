@@ -55,13 +55,7 @@
       </div>
     </div>
 
-
-    <b-modal
-      :id="modal_id"
-      title="Edit Listing"
-      hide-footer
-      v-model="this.editing"
-    >
+    <b-modal :id="modal_id" title="Edit Listing" hide-footer v-model="editing">
       <form @submit="submit_update_listing">
         <div class="form-group">
           <label for="listing_name">Name</label>
@@ -70,6 +64,16 @@
             v-model="edit_listing.name"
             class="form-control"
             id="listing_name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="listing_realtor">Realtor</label>
+          <input
+            type="text"
+            v-model="edit_listing.realtor"
+            class="form-control"
+            id="listing_realtor"
             required
           />
         </div>
@@ -166,9 +170,9 @@
         </div>
       </form>
 
-    <p class="red centered" v-if="this.error_message">
-      {{ this.error_message }}
-    </p>
+      <p class="red centered" v-if="this.error_message">
+        {{ this.error_message }}
+      </p>
     </b-modal>
   </div>
 </template>
@@ -217,6 +221,7 @@ export default {
         .then((response) => {
           if (response.data.success) {
             this.listing = this.edit_listing;
+            this.toggle_editing();
             this.$emit("update_listings");
           } else {
             this.error_message = response.data.message;
@@ -227,7 +232,6 @@ export default {
         })
         .then(() => {
           this.loading = false;
-          this.toggle_editing();
         });
     },
     submit_update_listing(e) {
