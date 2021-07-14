@@ -1,82 +1,105 @@
 <template>
   <div id="edituserview">
-    <div v-if="!this.editing">
-      <div class="row">
-        <div class="col">
-          {{ user.name }}
-        </div>
-        <div class="col">
-          <button @click="start_editing" class="btn btn-secondary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-pencil"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="col">
-          <button @click="delete_user" class="btn btn-danger">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-trash"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-              />
-            </svg>
-          </button>
-        </div>
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="col-2 item">{{ user.name }}</div>
+      <div class="col-2 item">{{ user.username }}</div>
+      <div class="col-2 item">{{ this.user_created }}</div>
+      <div class="col-2 item">{{ user.type }}</div>
+      <div class="col-2 item">
+        <button @click="toggle_editing" class="btn btn-secondary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-pencil"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
+            />
+          </svg>
+        </button>
+        <button @click="delete_user" class="btn btn-danger">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-trash"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+            />
+            <path
+              fill-rule="evenodd"
+              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+            />
+          </svg>
+        </button>
       </div>
+      <div class="col-1"></div>
     </div>
-    <div v-else>
-      Edit the user here
-      <button class="btn btn-danger" @click="cancel_editing">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-x"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+
+    <b-modal title="Edit User" hide-footer v-model="editing">
+      <form @submit="submit_update_user">
+        <div class="form-group">
+          <label for="user_name">Name</label>
+          <input
+            type="text"
+            v-model="edit_user.name"
+            class="form-control"
+            id="user_name"
+            required
           />
-        </svg>
-      </button>
-      <button class="btn btn-success" @click="update_user">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-check"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"
+        </div>
+        <div class="form-group">
+          <label for="user_username">Username</label>
+          <input
+            type="text"
+            v-model="edit_user.username"
+            class="form-control"
+            id="user_username"
+            required
           />
-        </svg>
-      </button>
-    </div>
-    <p class="red centered" v-if="this.error_message">
-      {{ this.error_message }}
-    </p>
+        </div>
+        <div class="form-group">
+          <label for="user_password">Password</label>
+          <input
+            type="password"
+            v-model="edit_password"
+            class="form-control"
+            id="user_password"
+          />
+        </div>
+        <div class="form-group">
+        <label for="user_type">Type</label>
+        <b-form-select v-model="edit_user.type">
+          <option
+            v-for="(select, index) in type.select.options"
+            :key="index"
+            :value="select"
+          >
+            {{ select }}
+          </option>
+        </b-form-select>
+      </div>
+        <div class="form-group">
+          <button class="btn btn-danger" @click="reset_edits">
+            Reset
+          </button>
+          <button class="btn btn-success" type="submit">
+            Finished
+          </button>
+        </div>
+      </form>
+
+      <p class="red centered" v-if="this.error_message">
+        {{ this.error_message }}
+      </p>
+    </b-modal>
   </div>
 </template>
 
@@ -84,34 +107,54 @@
 import axios from "axios";
 
 export default {
-  name: "EditUserView",
+  name: "EdituserView",
   data() {
     return {
       editing: false,
       edit_user: {},
+      edit_password: "",
       loading: false,
       error_message: null,
+      type: {
+        select: {
+          options: ["client", "realtor", "admin"],
+        },
+      },
     };
   },
   props: {
     user: Object,
     token: String,
   },
+  computed: {
+    user_created() {
+      return new Date(this.user.created_on).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    },
+  },
   methods: {
     reset() {
-      this.edit_user = this.user;
+      this.edit_user = Object.assign({}, this.user);
     },
     update_user() {
       this.loading = true;
       this.error_message = null;
+      let data = {
+        user: this.edit_user,
+        token: this.token,
+      }
+      if (this.edit_password !== "") {
+        this.data.password = this.edit_password;
+      }
       axios
-        .post("/api/update_user", {
-          user: this.edit_user,
-          token: this.token,
-        })
+        .post("/api/update_user", data)
         .then((response) => {
           if (response.data.success) {
-            this.user = this.edit_user;
+            this.toggle_editing();
+            this.$emit("update_users");
           } else {
             this.error_message = response.data.message;
           }
@@ -123,12 +166,16 @@ export default {
           this.loading = false;
         });
     },
+    submit_update_user(e) {
+      e.preventDefault();
+      this.update_user();
+    },
     delete_user() {
       this.loading = true;
       this.error_message = null;
       axios
         .post("/api/delete_user", {
-          username: this.user.username,
+          id: this.user.id,
           token: this.token,
         })
         .then((response) => {
@@ -139,28 +186,35 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           this.error_message = "Something went wrong";
         })
         .then(() => {
           this.loading = false;
         });
     },
-    start_editing() {
-      this.editing = true;
+    reset_edits() {
+      this.edit_user = Object.assign({}, this.user);
+      this.edit_password = "";
     },
-    cancel_editing() {
-      this.edit_user = this.user;
-      this.editing = false;
+    toggle_editing() {
+      this.editing = !this.editing;
     },
   },
   created() {
-    this.edit_user = this.user;
+    this.edit_user = Object.assign({}, this.user);
   },
 };
 </script>
 
 <style>
+#edituserview {
+  font-size: 10px;
+}
+.item {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
 .red {
   color: red;
 }
