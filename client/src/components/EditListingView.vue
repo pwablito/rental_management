@@ -161,6 +161,11 @@
           />
         </div>
         <div class="form-group">
+          <b-form-checkbox id="listing_is_listed" v-model="edit_listing.is_listed"
+            >Listed</b-form-checkbox
+          >
+        </div>
+        <div class="form-group">
           <button class="btn btn-danger" @click="reset_edits">
             Reset
           </button>
@@ -220,7 +225,6 @@ export default {
         })
         .then((response) => {
           if (response.data.success) {
-            this.listing = this.edit_listing;
             this.toggle_editing();
             this.$emit("update_listings");
           } else {
@@ -263,7 +267,6 @@ export default {
     },
     reset_edits() {
       this.edit_listing = Object.assign({}, this.listing);
-      this.toggle_editing();
     },
     toggle_editing() {
       this.editing = !this.editing;

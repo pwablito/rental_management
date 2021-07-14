@@ -104,6 +104,9 @@
           required
         />
       </div>
+      <div class="form-group">
+        <b-form-checkbox id="listing_is_listed" v-model="listing.is_listed">Listed</b-form-checkbox>
+      </div>
       <div class="form-group centered">
         <button type="submit" class="btn btn-success">Submit</button>
       </div>
@@ -134,6 +137,7 @@ export default {
         latitude: "",
         longitude: "",
         realtor: "",
+        is_listed: true,
       },
       error_message: "",
     };
@@ -154,6 +158,7 @@ export default {
           latitude: this.listing.latitude,
           longitude: this.listing.longitude,
           realtor: this.listing.realtor,
+          is_listed: this.listing.is_listed,
         })
         .then((response) => {
           if (response.data.success) {
@@ -178,6 +183,7 @@ export default {
       this.listing.latitude = "";
       this.listing.longitude = "";
       this.listing.realtor = "";
+      this.listing.is_listed = true;
     },
   },
 };
