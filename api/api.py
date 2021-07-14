@@ -337,7 +337,7 @@ def update_listing():
             listing_dict["price"],
             listing_dict["rooms"],
             listing_dict["bathrooms"],
-            listing_dict["created_on"],
+            None,
             listing_dict["latitude"],
             listing_dict["longitude"],
             listing_dict["is_listed"],
