@@ -39,7 +39,7 @@
       </form>
       <p>
         Already have an account?
-        <button @click="this.toggle_login_register">login</button> now.
+        <button @click="this.toggle_login_register" class="btn btn-secondary">login</button> now.
       </p>
     </div>
     <div class="login" v-else>
@@ -71,7 +71,7 @@
       </form>
       <p>
         Don't have an account?
-        <button @click="this.toggle_login_register">register</button> now.
+        <button @click="this.toggle_login_register" class="btn btn-secondary">register</button> now.
       </p>
     </div>
     <p class="red" v-if="this.error_message !== ''">
