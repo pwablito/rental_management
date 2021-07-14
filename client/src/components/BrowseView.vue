@@ -1,17 +1,17 @@
 <template>
-  <div id="browseview">
+  <div id="browseview" class="centered">
     <b-tabs content-class="mt-3" align="center" pills>
       <b-tab title="List" active>
         <div id="loading_div" class="centered" v-if="this.loading">Loading</div>
         <div v-else>
           <p>Listings:</p>
           <p v-if="this.listings.length === 0">None found</p>
-          <ul v-else>
-            <ListingView
-              v-for="listing in this.listings"
-              :key="listing.id"
-              :listing="listing"
-            />
+          <ul v-else class="left-aligned">
+            <div v-for="listing in this.listings"
+                :key="listing.id">
+              <ListingView :listing="listing" />
+              <hr>
+            </div>
           </ul>
           <p class="red" v-if="this.error_message !== ''">
             {{ this.error_message }}
@@ -56,6 +56,7 @@ export default {
     get_listings() {
       this.loading = true;
       this.error_message = null;
+      this.listings = [];
       axios
         .post("/api/get_listings", {
           token: this.token,
@@ -84,5 +85,8 @@ export default {
 }
 .centered {
   text-align: center;
+}
+.left-aligned {
+  text-align: left;
 }
 </style>

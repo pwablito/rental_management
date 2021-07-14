@@ -36,6 +36,7 @@ export default {
     get_users() {
       this.loading = true;
       this.error_message = null;
+      this.users = [];
       axios
         .post("/api/get_users", {
           token: this.token,

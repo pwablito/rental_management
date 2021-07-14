@@ -97,7 +97,7 @@
     </div>
 
     <br><br>
-    
+
     <div class="row">
       <div class="col-1 item">Name</div>
       <div class="col-2 item">Description</div>
@@ -195,6 +195,7 @@ export default {
     get_listings() {
       this.loading = true;
       this.error_message = null;
+      this.listings = [];
       axios
         .post("/api/get_listings", {
           token: this.token,
