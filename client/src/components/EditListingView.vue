@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <b-modal :id="modal_id" title="Edit Listing" hide-footer v-model="editing">
+    <b-modal title="Edit Listing" hide-footer v-model="editing">
       <form @submit="submit_update_listing">
         <div class="form-group">
           <label for="listing_name">Name</label>
@@ -200,9 +200,6 @@ export default {
     token: String,
   },
   computed: {
-    modal_id() {
-      return this.listing.id + "-modal";
-    },
     listing_created() {
       return new Date(this.listing.created_on).toLocaleDateString(undefined, {
         year: "numeric",
