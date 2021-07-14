@@ -1,5 +1,5 @@
 <template>
-  <div class="loginregister">
+  <div class="loginregister centered">
     <div class="register" v-if="this.registering">
       <h2 class="centered">Register</h2>
       <form @submit="register">
@@ -39,7 +39,7 @@
       </form>
       <p>
         Already have an account?
-        <button @click="this.toggle_login_register" class="btn btn-secondary">login</button> now.
+        <button @click="this.toggle_login_register" class="btn btn-secondary">login</button>
       </p>
     </div>
     <div class="login" v-else>
@@ -71,7 +71,7 @@
       </form>
       <p>
         Don't have an account?
-        <button @click="this.toggle_login_register" class="btn btn-secondary">register</button> now.
+        <button @click="this.toggle_login_register" class="btn btn-secondary">register</button>
       </p>
     </div>
     <p class="red" v-if="this.error_message !== ''">
