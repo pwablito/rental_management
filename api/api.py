@@ -153,7 +153,7 @@ def create_listing():
             datetime.datetime.now(),
             request_data["latitude"],
             request_data["longitude"],
-            True,
+            request_data["is_listed"],
             request_data["realtor"],
         ))
         return json.dumps({
@@ -303,7 +303,52 @@ def create_user():
 
 
 def update_listing():
-    return json.dumps({
-        "success": False,
-        "message": "Not implemented"
-    })
+    try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        entry = db.get_user_by_token(request_data["token"])
+        if util.token_is_expired(entry.token_created):
+            return json.dumps({
+                "success": False,
+                "message": "Token expired"
+            })
+        if not entry:
+            return json.dumps({
+                "success": False,
+                "message": "Invalid token",
+            })
+        if type(entry) == user.ClientUser:
+            return json.dumps({
+                "success": False,
+                "message": "Clients can not update listings",
+            })
+        listing_dict = request_data["listing"]
+        try:
+            db.get_listing_by_id(listing_dict["id"])
+        except error.ListingNotFoundException:
+            return json.dumps({
+                "success": False,
+                "message": "Listing not found",
+            })
+        db.update_listing(listing.Listing(
+            listing_dict["id"],
+            listing_dict["name"],
+            listing_dict["description"],
+            listing_dict["floor_area"],
+            listing_dict["price"],
+            listing_dict["rooms"],
+            listing_dict["bathrooms"],
+            listing_dict["created_on"],
+            listing_dict["latitude"],
+            listing_dict["longitude"],
+            listing_dict["is_listed"],
+            listing_dict["realtor"],
+        ))
+        return json.dumps({
+            "success": True,
+        })
+    except Exception as e:
+        print(e.with_traceback())
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong"
+        })

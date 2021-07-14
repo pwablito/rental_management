@@ -224,6 +224,35 @@ def get_all_listings(only_listed=False, db_file="db.sqlite"):
             ))
         return listings
 
+def get_listing_by_id(listing_id, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            SELECT id, name, description, floor_area, price,
+            rooms, bathrooms, created_on, latitude, longitude,
+            is_listed, realtor
+            FROM listing
+            WHERE id=?
+            ''', (listing_id,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            raise error.ListingNotFoundException
+        return listing.Listing(
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5],
+            row[6],
+            dateutil.parser.parse(row[7]),
+            row[8],
+            row[9],
+            True if row[10] != 0 else False,
+            row[11],
+        )
 
 def insert_listing(listing, db_file="db.sqlite"):
     with get_connection(db_file) as conn:
@@ -321,10 +350,31 @@ def get_all_users(db_file="db.sqlite"):
                 raise InvalidUserTypeException
         return users
 
-def update_user(username, name, type, password_hash, password_salt, db_file="db.sqlite"):
+def update_user(entry, db_file="db.sqlite"):
     with get_connection(db_file) as connection:
-        pass
-    raise NotImplementedError
+        cursor=conn.cursor()
+        cursor.execute(
+            '''
+            UPDATE user SET name=?, type=?, password_hash=?, password_salt=?
+            WHERE username=?
+            ''', (
+                entry.name,
+                get_user_type_number(entry),
+                entry.password_hash,
+                entry.password_salt,
+                entry.username,
+            )
+        )
 
-def update_listing(listing):
-    raise NotImplementedError
+def update_listing(listing, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
+        cursor=conn.cursor()
+        cursor.execute(
+            '''
+            UPDATE listing SET name=?, description=?, floor_area=?, price=?,
+            rooms=?, bathrooms=?, latitude=?, longitude=?, is_listed=?, realtor=?
+            WHERE id=?
+            ''', (listing.name, listing.description, listing.floor_area, listing.price,
+                  listing.rooms, listing.bathrooms, listing.latitude, listing.longitude,
+                  1 if listing.is_listed else 0, listing.realtor, listing.id,)
+        )

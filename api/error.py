@@ -6,3 +6,6 @@ class InvalidUserTypeException(Exception):
 
 class UserAlreadyExistsException(Exception):
     pass
+
+class ListingNotFoundException(Exception):
+    pass
