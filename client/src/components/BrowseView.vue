@@ -1,130 +1,153 @@
 <template>
   <div id="browseview" class="centered">
-    <div id="filters" class="centered">
-
-      <div class="row">
-        <div class="col-6">
-          <div class="input-group input-group-sm ">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Min Floor Area</span>
+    <b-tabs content-class="mt-3" align="center" pills>
+      <b-tab title="List" active>
+        <div id="filters" class="centered">
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group input-group-sm ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-sm"
+                    >Min Floor Area</span
+                  >
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  aria-label="Min Floor Area"
+                  aria-describedby="inputGroup-sizing-sm"
+                  v-model="filters.floor_area_min"
+                />
+              </div>
             </div>
-            <input
-              type="number"
-              class="form-control"
-              aria-label="Min Floor Area"
-              aria-describedby="inputGroup-sizing-sm"
-              v-model="filters.floor_area_min"
-            />
+            <div class="col-6">
+              <div class="input-group input-group-sm ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-sm"
+                    >Max Floor Area</span
+                  >
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  aria-label="Max Floor Area"
+                  aria-describedby="inputGroup-sizing-sm"
+                  v-model="filters.floor_area_max"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group input-group-sm ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-sm"
+                    >Min Price</span
+                  >
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  aria-label="Min Price"
+                  aria-describedby="inputGroup-sizing-sm"
+                  v-model="filters.price_min"
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group input-group-sm ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-sm"
+                    >Max Price</span
+                  >
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  aria-label="Max Price"
+                  aria-describedby="inputGroup-sizing-sm"
+                  v-model="filters.price_max"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group input-group-sm ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-sm"
+                    >Min Rooms</span
+                  >
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  aria-label="Min Rooms"
+                  aria-describedby="inputGroup-sizing-sm"
+                  v-model="filters.bed_min"
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group input-group-sm ">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-sm"
+                    >Max Rooms</span
+                  >
+                </div>
+                <input
+                  type="number"
+                  class="form-control"
+                  aria-label="Max Rooms"
+                  aria-describedby="inputGroup-sizing-sm"
+                  v-model="filters.bed_max"
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="input-group input-group-sm ">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Max Floor Area</span>
-            </div>
-            <input
-              type="number"
-              class="form-control"
-              aria-label="Max Floor Area"
-              aria-describedby="inputGroup-sizing-sm"
-              v-model="filters.floor_area_max"
-            />
+
+        <br /><br />
+
+        <div class="row left-aligned">
+          <div class="col-1 item">Name</div>
+          <div class="col-1 item">Realtor</div>
+          <div class="col-3 item">Description</div>
+          <div class="col-1 item">Floor Area</div>
+          <div class="col-1 item">Price</div>
+          <div class="col-2 item">Bed/Bath</div>
+          <div class="col-2 item">Created</div>
+          <div class="col-1 item">Lat/Lon</div>
+        </div>
+        <hr />
+        <div
+          v-for="listing in this.listings"
+          :key="listing.id"
+          class="left-aligned"
+        >
+          <div v-if="satisfies_filters(listing)">
+            <ListingView :listing="listing" />
+            <hr />
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-6">
-          <div class="input-group input-group-sm ">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Min Price</span>
-            </div>
-            <input
-              type="number"
-              class="form-control"
-              aria-label="Min Price"
-              aria-describedby="inputGroup-sizing-sm"
-              v-model="filters.price_min"
-            />
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="input-group input-group-sm ">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Max Price</span>
-            </div>
-            <input
-              type="number"
-              class="form-control"
-              aria-label="Max Price"
-              aria-describedby="inputGroup-sizing-sm"
-              v-model="filters.price_max"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-6">
-          <div class="input-group input-group-sm ">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Min Rooms</span>
-            </div>
-            <input
-              type="number"
-              class="form-control"
-              aria-label="Min Rooms"
-              aria-describedby="inputGroup-sizing-sm"
-              v-model="filters.bed_min"
-            />
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="input-group input-group-sm ">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroup-sizing-sm">Max Rooms</span>
-            </div>
-            <input
-              type="number"
-              class="form-control"
-              aria-label="Max Rooms"
-              aria-describedby="inputGroup-sizing-sm"
-              v-model="filters.bed_max"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <br><br>
-
-    <div class="row left-aligned">
-      <div class="col-1 item">Name</div>
-      <div class="col-1 item">Realtor</div>
-      <div class="col-3 item">Description</div>
-      <div class="col-1 item">Floor Area</div>
-      <div class="col-1 item">Price</div>
-      <div class="col-2 item">Bed/Bath</div>
-      <div class="col-2 item">Created</div>
-      <div class="col-1 item">Lat/Lon</div>
-    </div>
-    <hr />
-    <div v-for="listing in this.listings" :key="listing.id" class="left-aligned">
-      <div v-if="satisfies_filters(listing)">
-        <ListingView :listing="listing" />
-        <hr>
-      </div>
-    </div>
-
-    <button class="btn btn-primary" @click="this.get_listings">
-      Reload
-    </button>
+        <button class="btn btn-primary" @click="this.get_listings">
+          Reload
+        </button>
+      </b-tab>
+      <b-tab title="Map">
+        <MapListingsView :listings="listings" />
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import ListingView from "./ListingView.vue";
+import MapListingsView from "./MapListingsView.vue";
 
 export default {
   name: "BrowseView",
@@ -133,6 +156,7 @@ export default {
   },
   components: {
     ListingView,
+    MapListingsView,
   },
   data() {
     return {
