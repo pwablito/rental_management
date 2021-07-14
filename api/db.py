@@ -351,18 +351,29 @@ def get_all_users(db_file="db.sqlite"):
         return users
 
 def update_user(entry, db_file="db.sqlite"):
-    with get_connection(db_file) as connection:
+    with get_connection(db_file) as conn:
         cursor=conn.cursor()
         cursor.execute(
             '''
-            UPDATE user SET name=?, type=?, password_hash=?, password_salt=?
+            UPDATE user SET name=?, type=?
             WHERE username=?
             ''', (
                 entry.name,
                 get_user_type_number(entry),
-                entry.password_hash,
-                entry.password_salt,
                 entry.username,
+            )
+        )
+def set_user_password(username, password_hash, password_salt, db_file="db.sqlite"):
+    with get_connection(db_file) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''
+            UPDATE user SET password_hash=?, password_salt=?
+            WHERE username=?
+            ''', (
+                password_hash,
+                password_salt,
+                username,
             )
         )
 

@@ -70,7 +70,7 @@ def update_user():
         if type(entry) != user.AdminUser:
             return json.dumps({
                 "success": False,
-                "message": "Only administrators can not delete users",
+                "message": "Only administrators can update users",
             })
         user_dict = request_data["user"]
         update_user = None
@@ -83,10 +83,15 @@ def update_user():
         else:
             raise error.InvalidUserTypeException
         db.update_user(update_user)
+        if "password" in request_data:
+            password_salt = util.random_string()
+            password_hash = util.get_hash(password_salt + request_data["password"])
+            db.set_user_password(update_user.username, password_hash, password_salt)
         return json.dumps({
             "success": True,
         })
-    except:
+    except Exception as e:
+        print(e.with_traceback())
         return json.dumps({
             "success": False,
             "message": "Something went wrong"
