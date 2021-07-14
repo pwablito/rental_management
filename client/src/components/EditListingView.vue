@@ -227,6 +227,7 @@ export default {
         })
         .then(() => {
           this.loading = false;
+          this.toggle_editing();
         });
     },
     submit_update_listing(e) {
@@ -258,6 +259,7 @@ export default {
     },
     reset_edits() {
       this.edit_listing = Object.assign({}, this.listing);
+      this.toggle_editing();
     },
     toggle_editing() {
       this.editing = !this.editing;
