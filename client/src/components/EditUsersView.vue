@@ -1,7 +1,9 @@
 <template>
   <div id="editusers" class="centered">
     <div v-for="user in this.users" :key="user.username">
+      <hr>
       <EditUserView :user="user" :token="token" @update_users="get_users" />
+      <hr>
     </div>
 
     <button class="btn btn-primary" @click="this.get_users">
