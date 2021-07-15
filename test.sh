@@ -35,16 +35,19 @@ function test_endpoint {
     fi
 }
 
+# Database is setup with admin:password
 test_endpoint "/api/login" '{"username":"admin","password":"password"}' "\"success\": true"
 test_endpoint "/api/login" '{"username":"admin","password":"incorrect"}' "\"success\": false"
 test_endpoint "/api/login" '{"username":"admin"}' "Missing fields"
 test_endpoint "/api/register" '{"username":"test","password":"test"}' "Missing fields"
 test_endpoint "/api/register" '{"username":"test","password":"test","name":"test"}' "\"success\": true"
+# Duplicate username
 test_endpoint "/api/register" '{"username":"test","password":"test","name":"test"}' "\"success\": false"
 
 admin_token=`curl -X POST -H "Content-Type: application/json" -d '{"username":"admin","password":"password"}' http://127.0.0.1:5000/api/login 2>/dev/null | python3 -c "import sys, json; print(json.load(sys.stdin)['token'])"`
 
 test_endpoint "/api/create_user" "{}" "Missing fields"
+# Create additional users
 test_endpoint "/api/create_user" "{\"username\":\"client\",\"password\":\"test\",\"name\":\"Client\",\"type\":\"client\",\"token\":\"$admin_token\"}" "\"success\": true"
 test_endpoint "/api/create_user" "{\"username\":\"realtor\",\"password\":\"test\",\"name\":\"Realtor\",\"type\":\"realtor\",\"token\":\"$admin_token\"}" "\"success\": true"
 
@@ -91,14 +94,19 @@ test_endpoint "/api/update_user" "{\"user\": {\"username\":\"client\",\"name\":\
 test_endpoint "/api/update_user" "{\"user\": {\"username\":\"client\",\"name\":\"new_name\",\"type\":\"client\"},\"token\":\"$admin_token\"}" "\"success\": true"
 
 test_endpoint "/api/delete_listing" "{}" "Missing fields"
+# Only admin and realtor users can delete listings
 test_endpoint "/api/delete_listing" "{\"id\":\"$listing_id\",\"token\":\"$client_token\"}" "\"success\": false"
 test_endpoint "/api/delete_listing" "{\"id\":\"$listing_id\",\"token\":\"$realtor_token\"}" "\"success\": true"
 listing_id=`curl -X POST -H "Content-Type: application/json" -d "{\"token\":\"$client_token\"}" http://127.0.0.1:5000/api/get_listings 2>/dev/null | python3 -c "import sys, json; print(json.load(sys.stdin)['listings'][0]['id'])"`
 test_endpoint "/api/delete_listing" "{\"id\":\"$listing_id\",\"token\":\"$admin_token\"}" "\"success\": true"
 
 test_endpoint "/api/delete_user" "{}" "Missing fields"
+# Only admin users can delete users
 test_endpoint "/api/delete_user" "{\"username\":\"client\",\"token\":\"$client_token\"}" "\"success\": false"
 test_endpoint "/api/delete_user" "{\"username\":\"client\",\"token\":\"$realtor_token\"}" "\"success\": false"
 test_endpoint "/api/delete_user" "{\"username\":\"client\",\"token\":\"$admin_token\"}" "\"success\": true"
+# Cleanup
+test_endpoint "/api/delete_user" "{\"username\":\"test\",\"token\":\"$admin_token\"}" "\"success\": true"
+test_endpoint "/api/delete_user" "{\"username\":\"realtor\",\"token\":\"$admin_token\"}" "\"success\": true"
 
 echo "Passed all API tests"
