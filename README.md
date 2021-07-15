@@ -31,5 +31,8 @@ To run development server:
 Then navigate to `http://127.0.0.1/` in your browser
 
 
+## Documentation
+
+For documentation on the API, see [API.md](API.md)
 
 ## Author: Paul Spencer
