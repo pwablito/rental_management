@@ -123,7 +123,6 @@ def update_user():
             "message": "Missing fields",
         })
     except Exception as e:
-        print(e.with_traceback())
         return json.dumps({
             "success": False,
             "message": "Something went wrong"
