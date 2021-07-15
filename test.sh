@@ -85,5 +85,20 @@ test_endpoint "/api/update_listing" "{\"listing\": {\"id\":\"$listing_id\",\"nam
 test_endpoint "/api/update_listing" "{\"listing\": {\"id\":\"$listing_id\",\"name\":\"new_name_3\",\"description\":\"a listing\",\"floor_area\":1000,\"price\":1000,\"rooms\":2,\"bathrooms\":1,\"is_listed\":true,\"latitude\":0,\"longitude\":0,\"realtor\":\"realtor\"},\"token\":\"$client_token\"}" "\"success\": false"
 
 test_endpoint "/api/update_user" "{}" "Missing fields"
+# Only admin users can update users
+test_endpoint "/api/update_user" "{\"user\": {\"username\":\"client\",\"name\":\"new_name\",\"type\":\"client\"},\"token\":\"$client_token\"}" "\"success\": false"
+test_endpoint "/api/update_user" "{\"user\": {\"username\":\"client\",\"name\":\"new_name\",\"type\":\"client\"},\"token\":\"$realtor_token\"}" "\"success\": false"
+test_endpoint "/api/update_user" "{\"user\": {\"username\":\"client\",\"name\":\"new_name\",\"type\":\"client\"},\"token\":\"$admin_token\"}" "\"success\": true"
+
+test_endpoint "/api/delete_listing" "{}" "Missing fields"
+test_endpoint "/api/delete_listing" "{\"id\":\"$listing_id\",\"token\":\"$client_token\"}" "\"success\": false"
+test_endpoint "/api/delete_listing" "{\"id\":\"$listing_id\",\"token\":\"$realtor_token\"}" "\"success\": true"
+listing_id=`curl -X POST -H "Content-Type: application/json" -d "{\"token\":\"$client_token\"}" http://127.0.0.1:5000/api/get_listings 2>/dev/null | python3 -c "import sys, json; print(json.load(sys.stdin)['listings'][0]['id'])"`
+test_endpoint "/api/delete_listing" "{\"id\":\"$listing_id\",\"token\":\"$admin_token\"}" "\"success\": true"
+
+test_endpoint "/api/delete_user" "{}" "Missing fields"
+test_endpoint "/api/delete_user" "{\"username\":\"client\",\"token\":\"$client_token\"}" "\"success\": false"
+test_endpoint "/api/delete_user" "{\"username\":\"client\",\"token\":\"$realtor_token\"}" "\"success\": false"
+test_endpoint "/api/delete_user" "{\"username\":\"client\",\"token\":\"$admin_token\"}" "\"success\": true"
 
 echo "Passed all API tests"
