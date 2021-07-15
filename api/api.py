@@ -201,6 +201,7 @@ def create_listing():
         ))
         return json.dumps({
             "success": True,
+            "id": listing_id,
         })
     except error.UserNotFoundException:
         return json.dumps({
