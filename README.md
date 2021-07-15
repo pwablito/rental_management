@@ -2,6 +2,13 @@
 
 An application to manage apartment rentals
 
+## API KEY
+
+To setup the Google Maps API, you must obtain an API key. For information on how to get the key, visit the [Google Maps API Console](https://developers.google.com/maps/documentation/javascript/get-api-key).
+
+Once you have the key, place it in `client/src/main.js` where it says `<INSERT_API_KEY_HERE>`
+
+Now, the production and development servers should work.
 
 ## Production
 
