@@ -21,7 +21,7 @@ def main():
         salt = util.random_string()
         password = "password"
         db.insert_user(user.AdminUser(
-            "admin", "admin", datetime.datetime.now(), util.get_hash(salt + password), salt, None
+            "admin", "admin", datetime.datetime.now(), util.get_hash(salt + password), salt, None, None
         ))
 
 

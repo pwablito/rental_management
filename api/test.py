@@ -42,7 +42,6 @@ def remove_db_if_exists(db_file):
 def run_test(func, name, *args):
     print("Testing {}".format(name))
     func(*args)
-    print("Passed")
     
 
 # NOTE these test have to be run in the order they are defined below because some of the later tests depend on the earlier ones

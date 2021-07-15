@@ -2,4 +2,4 @@
 
 cd api
 rm db.sqlite 2> /dev/null
-./setup_db.py
+./setup_db.py --add-admin
