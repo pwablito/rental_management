@@ -9,10 +9,10 @@ import error
 
 
 def register():
-    request_data = json.loads(request.data.decode('utf-8'))
-    salt = util.random_string()
-    password_hash = util.get_hash(salt + request_data["password"])
     try:
+        request_data = json.loads(request.data.decode('utf-8'))
+        salt = util.random_string()
+        password_hash = util.get_hash(salt + request_data["password"])
         entry = user.ClientUser(
             request_data["username"], request_data["name"], datetime.datetime.now(), password_hash, salt, None, None)
         db.insert_user(entry)
@@ -28,29 +28,51 @@ def register():
             "success": False,
             "message": "Username already taken",
         })
+    except KeyError:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
+        })
 
 
 def login():
-    request_data = json.loads(request.data.decode('utf-8'))
     try:
+        request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user(request_data["username"])
+        if util.get_hash(entry.password_salt + request_data["password"]) == entry.password_hash:
+            token = util.random_string()
+            db.set_token(entry.username, token)
+            return json.dumps({
+                "success": True,
+                "user": entry.to_dict(),
+                "token": token,
+            })
+        return json.dumps({
+            "success": False,
+            "message": "Incorrect password",
+        })
     except error.UserNotFoundException:
         return json.dumps({
             "success": False,
             "message": "Invalid username",
         })
-    if util.get_hash(entry.password_salt + request_data["password"]) == entry.password_hash:
-        token = util.random_string()
-        db.set_token(entry.username, token)
+    except KeyError:
         return json.dumps({
-            "success": True,
-            "user": entry.to_dict(),
-            "token": token,
+            "success": False,
+            "message": "Missing fields",
         })
-    return json.dumps({
-        "success": False,
-        "message": "Incorrect password",
-    })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
+        })
+
+        
 
 
 def update_user():
@@ -90,6 +112,16 @@ def update_user():
         return json.dumps({
             "success": True,
         })
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
+    except KeyError as e:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
     except Exception as e:
         print(e.with_traceback())
         return json.dumps({
@@ -99,8 +131,8 @@ def update_user():
 
 
 def get_listings():
-    request_data = json.loads(request.data.decode('utf-8'))
     try:
+        request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user_by_token(request_data["token"])
         if util.token_is_expired(entry.token_created):
             return json.dumps({
@@ -119,8 +151,17 @@ def get_listings():
             "success": True,
             "listings": [listing.to_dict() for listing in db.get_all_listings(only_listed=is_client)]
         })
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
+    except KeyError as e:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
     except Exception as e:
-        raise e
         return json.dumps({
             "success": False,
             "message": "Something went wrong",
@@ -164,10 +205,20 @@ def create_listing():
         return json.dumps({
             "success": True,
         })
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
     except KeyError as e:
         return json.dumps({
             "success": False,
             "message": "Missing fields",
+        })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
         })
 
 
@@ -194,10 +245,20 @@ def delete_listing():
         return json.dumps({
             "success": True,
         })
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
     except KeyError:
         return json.dumps({
             "success": False,
             "message": "Missing fields",
+        })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
         })
 
 
@@ -224,16 +285,26 @@ def delete_user():
         return json.dumps({
             "success": True,
         })
-    except KeyError:
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
+    except KeyError as e:
         return json.dumps({
             "success": False,
             "message": "Missing fields",
         })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
+        })
 
 
 def get_users():
-    request_data = json.loads(request.data.decode('utf-8'))
     try:
+        request_data = json.loads(request.data.decode('utf-8'))
         entry = db.get_user_by_token(request_data["token"])
         if util.token_is_expired(entry.token_created):
             return json.dumps({
@@ -254,8 +325,17 @@ def get_users():
             "success": True,
             "users": [current_user.to_dict() for current_user in db.get_all_users()]
         })
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
+    except KeyError as e:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
     except Exception as e:
-        raise e
         return json.dumps({
             "success": False,
             "message": "Something went wrong",
@@ -300,12 +380,21 @@ def create_user():
         return json.dumps({
             "success": True,
         })
+    except error.UserNotFoundException:
+        return json.dumps({
+            "success": False,
+            "message": "Invalid token",
+        })
     except KeyError as e:
         return json.dumps({
             "success": False,
             "message": "Missing fields",
         })
-
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
+        })
 
 def update_listing():
     try:
@@ -351,9 +440,18 @@ def update_listing():
         return json.dumps({
             "success": True,
         })
-    except Exception as e:
-        print(e.with_traceback())
+    except error.UserNotFoundException:
         return json.dumps({
             "success": False,
-            "message": "Something went wrong"
+            "message": "Invalid token",
+        })
+    except KeyError as e:
+        return json.dumps({
+            "success": False,
+            "message": "Missing fields",
+        })
+    except Exception as e:
+        return json.dumps({
+            "success": False,
+            "message": "Something went wrong",
         })
