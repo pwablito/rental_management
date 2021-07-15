@@ -62,17 +62,17 @@ def test_insert_get_all_user(db_file):
     password = "password"
     salt = "abcdefg"
     token = "abcdefg"
-    insert_user = user.ClientUser(username_base + "client", name, datetime.datetime.now(), util.get_hash(salt + password), salt, token)
+    insert_user = user.ClientUser(username_base + "client", name, datetime.datetime.now(), util.get_hash(salt + password), salt, token, datetime.datetime.now())
     db.insert_user(insert_user, db_file=db_file)
     users = db.get_all_users(db_file=db_file)
     assert len(users) == 1
     assert type(users[0]) == user.ClientUser
-    insert_user = user.RealtorUser(username_base + "realtor", name, datetime.datetime.now(), util.get_hash(salt + password), salt, token)
+    insert_user = user.RealtorUser(username_base + "realtor", name, datetime.datetime.now(), util.get_hash(salt + password), salt, token, datetime.datetime.now())
     db.insert_user(insert_user, db_file=db_file)
     users = db.get_all_users(db_file=db_file)
     assert len(users) == 2
     assert type(users[1]) == user.RealtorUser
-    insert_user = user.AdminUser(username_base + "admin", name, datetime.datetime.now(), util.get_hash(salt + password), salt, token)
+    insert_user = user.AdminUser(username_base + "admin", name, datetime.datetime.now(), util.get_hash(salt + password), salt, token, datetime.datetime.now())
     db.insert_user(insert_user, db_file=db_file)
     users = db.get_all_users(db_file=db_file)
     assert len(users) == 3
