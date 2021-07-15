@@ -30,6 +30,12 @@ To run development server:
 ```
 Then navigate to `http://127.0.0.1/` in your browser
 
+## Tests
+
+To run tests:
+```bash
+./test.sh
+```
 
 ## Documentation
 
