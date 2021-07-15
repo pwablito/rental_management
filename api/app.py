@@ -7,17 +7,26 @@ import os
 
 app = Flask(__name__)
 
-app.add_url_rule('/api/register', view_func=api.register, methods=["POST"])
+# Authentication endpoints
 app.add_url_rule('/api/login', view_func=api.login, methods=["POST"])
-app.add_url_rule('/api/update_user', view_func=api.update_user, methods=["POST"])
-app.add_url_rule('/api/get_listings', view_func=api.get_listings, methods=["POST"])
-app.add_url_rule('/api/create_listing', view_func=api.create_listing, methods=["POST"])
-app.add_url_rule('/api/delete_listing', view_func=api.delete_listing, methods=["POST"])
-app.add_url_rule('/api/delete_user', view_func=api.delete_user, methods=["POST"])
-app.add_url_rule('/api/get_users', view_func=api.get_users, methods=["POST"])
-app.add_url_rule('/api/update_user', view_func=api.update_user, methods=["POST"])
+app.add_url_rule('/api/register', view_func=api.register, methods=["POST"])
+
+# Create endpoints
 app.add_url_rule('/api/create_user', view_func=api.create_user, methods=["POST"])
+app.add_url_rule('/api/create_listing', view_func=api.create_listing, methods=["POST"])
+
+# Read endpoints
+app.add_url_rule('/api/get_users', view_func=api.get_users, methods=["POST"])
+app.add_url_rule('/api/get_listings', view_func=api.get_listings, methods=["POST"])
+
+# Update endpoints
+app.add_url_rule('/api/update_user', view_func=api.update_user, methods=["POST"])
 app.add_url_rule('/api/update_listing', view_func=api.update_listing, methods=["POST"])
+
+# Delete endpoints
+app.add_url_rule('/api/delete_user', view_func=api.delete_user, methods=["POST"])
+app.add_url_rule('/api/delete_listing', view_func=api.delete_listing, methods=["POST"])
+
 
 ### FOR DEVELOPMENT SERVER ###
 @app.route('/')
