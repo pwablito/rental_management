@@ -175,7 +175,7 @@ export default {
       this.error_message = null;
       axios
         .post("/api/delete_user", {
-          id: this.user.id,
+          username: this.user.username,
           token: this.token,
         })
         .then((response) => {
